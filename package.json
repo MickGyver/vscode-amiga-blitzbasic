@@ -1,0 +1,87 @@
+{
+	"name": "amiga-blitzbasic2",
+	"displayName": "Amiga Blitz Basic 2",
+	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz",
+	"publisher" : "mickgyver",
+	"icon" : "resources/images/bb2.png",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.53.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"activationEvents": [
+		"onLanguage:abb2",
+		"onCommand:amiga-blitzbasic2.runwinuae",
+		"onCommand:amiga-blitzbasic2.runamiga",
+		"onCommand:amiga-blitzbasic2.showhelp"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "amiga-blitzbasic2.runwinuae",
+				"title": "BB2: Run in WinUAE"
+			},
+			{
+				"command": "amiga-blitzbasic2.runamiga",
+				"title": "BB2: Run on Amiga"
+			},
+			{
+				"command": "amiga-blitzbasic2.showhelp",
+				"title": "BB2: Show Help"
+			}
+		],
+		"languages": [{
+            "id": "abb2",
+            "aliases": ["Amiga Blitz Basic 2", "abb2"],
+            "extensions": [".bb",".bb2"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "abb2",
+            "scopeName": "source.abb2",
+            "path": "./syntaxes/abb2.tmLanguage.json"
+        }],
+        "snippets": [
+            {
+                "language": "abb2",
+                "path": "./snippets/extras.code-snippets"
+            },
+            {
+                "language": "abb2",
+                "path": "./snippets/functions.code-snippets"
+            },
+            {
+                "language": "abb2",
+                "path": "./snippets/program_flow.code-snippets"
+            }
+        ],
+		"keybindings": [
+			{
+			  "command": "amiga-blitzbasic2.showhelp",
+			  "key": "ctrl+f1",
+			  "mac": "cmd+f1",
+			  "when": "editorTextFocus"
+			},
+			{
+			"command": "amiga-blitzbasic2.runwinuae",
+				"key": "ctrl+f5",
+				"mac": "cmd+f5",
+				"when": "editorTextFocus"
+				},
+			{
+				"command": "amiga-blitzbasic2.runamiga",
+				"key": "ctrl+f6",
+				"mac": "cmd+f6",
+				"when": "editorTextFocus"
+			}
+		]
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.53.0",
+		"typescript": "^4.1.3",
+		"vscode-test": "^1.5.0"
+	}
+}

@@ -1,0 +1,50 @@
+{
+  "NEWTYPE: .sfx": {
+    "prefix": "sfx",
+    "body": "NEWTYPE .sfx\n\tsfxPtr.l ; Pointer to sample start in chip ram, even address\n\tsfxLen.w ; Sample length\n\tsfxPer.w ; Hardware replay period for sample\n\tsfxVol.w ; Volume 0..64, is unaffected by the song's master volume\n\tsfxCha.b ; 0..3 selected replay channel, -1 selects best channel\n\tsfxPri.b ; unsigned priority, must be non-zero\nEnd NEWTYPE",
+    "description": "SFX structure used for PHX PTPlayer"
+  },
+  "NEWTYPE: .bitmap": {
+    "prefix": "bitmap",
+    "body": "NEWTYPE .bitmap\n\t_ebwidth.w[0]      ;00: for compatability.\n\t_linemod.w         ;00: value to get from one scanline to next.\n\t_height.w          ;02: currently pixel height - but open to commodore 'enhancement'.\n\t_depth.w           ;04: number of bitplanes.\n\t_pad.b[2]          ;06: nothing.\n\t_data.l[8]         ;08: actual bitplane pointers.\n\t_pad2.b[12]        ;40: zilch.\n\t_flags.w           ;0=normal bitmap, <0=interleaved.\n\t_bitplanemod.w     ;value to get from one bitplane to next. MAY BE 0!\n\t_xclip.w           ;pixel width for render clipping\n\t_yclip.w           ;pixel height for render clipping\n\t_cclip.w           ;number of colours available on bitmap ( = 2^_depth)\n\t_isreal.w          ;0=no bitmap here, <0=blitz created bitmap, >0=borrowed\nEnd NEWTYPE",
+    "description": "Bitmap object newtype"
+  },
+  "NEWTYPE: .coplist": {
+    "prefix": "coplist",
+    "body": "NEWTYPE .coplist\n\tsize.l            ;0 = not initialised\n\tcoppos.l          ;location in chipmem\n\tcolors.l\n\tsprites.l\n\tbpcons.l\n\tbplanes.l\n\tdot.l\n\tcustoms.l\n\tdob.l\n\tnumbp.w:colpokes.w                  ;limits\n\tfetchwid.w:xand:xshift              ;for show calculations (3 words)\n\typos.w:height:res\n\tnumsprites.w:numcols:numcustoms\n\taga.w                               ;24bit=$8000 fetch = $00,$10,$20,$30\n\tresshift.w                          ;lo,hi,shi = 2 1 0\n\tsetup.w                             ;lines taken for setup\n\tcblow.w                             ;if custom goes below 256\n\tsfetch.w:spres:spif:spwid:sspwid    ;sprite mode for display\nEnd NEWTYPE",
+    "description": "CopList object newtype"
+  },
+  "NEWTYPE: .sound": {
+    "prefix": "sound",
+    "body": "NEWTYPE .sound\n\t_data.l             ;00: NULL if no sound present, else pointer to sound data\n\t_period.w           ;04: period of sound\n\t_length.w           ;06: length, in words, of sound data\n\t_loop.l             ;08: repeat to loop position of sound\n\t_looplength.w       ;12: length of looping section, in words\n\t_pad.b[2]           ;14:\nEnd NEWTYPE",
+    "description": "Sound object newtype"
+  },
+  "NEWTYPE: .sprite": {
+    "prefix": "sprite",
+    "body": "NEWTYPE .sprite\n\t_data.l             ;00: NULL if no sprite present, else pointer to sprite data\n\t_height.w           ;04: height of sprite, in pixels, plus an extra 1\n\t_channels.w         ;06: number of sprite channels required to display sprite\n\t_flags.w            ;08: low byte = pix width of sprite, hi bit = 1 if 16 colour sprite\n\t_nextoff.w          ;10: difference in bytes between seperate sprites for separate sprite channels\n\t_xhandle.w          ;12: horizontal handle for sprite\n\t_yhandle.w          ;14: vertical handle for sprite\nEnd NEWTYPE",
+    "description": "Sprite object newtype"
+  },
+  "NEWTYPE: .shape": {
+    "prefix": "shape",
+    "body": "NEWTYPE .shape\n\t_pixwidth.w         ;00: pixel width of shape null=noshape\n\t_pixheight.w        ;02: pixel height of shape\n\t_depth.w            ;04: depth, in bitplanes, of shape\n\t_ebwidth.w          ;06: even byte width of shape\n\t_bltsize.w          ;08: BLTSIZE of shape\n\t_xhandle.w          ;10: horizontal handle of shape\n\t_yhandle.w          ;12: vertical handle of shape\n\t_data.l             ;14: pointer to graphic data - Plane1, Plane2...\n\t_cookie.l           ;18: pointer to one bitplane cookiecut\n\t_onebpmem.w         ;22: memory taken by one bitplane of shape\n\t_onebpmemx.w        ;24: memory taken by one bitplane of shape, plus an extra word per bitplane per vertical pixel\n\t_allbpmem.w         ;26: memory taken by entire shape.\n\t_allbpmemx.w        ;28: memory taken by entire shape, plus an extra word per bitplane per vertical pixel\n\t_pad.b[2]           ;30:\nEnd NEWTYPE",
+    "description": "Shape object newtype"
+  },
+  "Statement: SFXInit{...}": {
+    "prefix": "SFXInit",
+    "body": "Statement SFXInit {*fx.sfx, snd.w, vol.w, cha.b, pri.b}\n\t*_snd.sound=Addr Sound(snd)  ; Get the pointer to the sound\n\t;Poke.w *_snd\\_data, 0       ; Clear the first word of the sound, shouldn't be needed\n\t*fx\\sfxPtr=*_snd\\_data       ; Copy all the data needed\n\t*fx\\sfxLen=*_snd\\_length     ; ...\n\t*fx\\sfxPer=*_snd\\_period\n\t*fx\\sfxVol=vol\n\t*fx\\sfxCha=cha\n\t*fx\\sfxPri=pri\nEnd Statement"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

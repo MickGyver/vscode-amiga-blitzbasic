@@ -1,0 +1,87 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Amiga Blitz Basic 2",
+	"patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#commands"
+    },
+    {
+      "include": "#numbers"
+    }
+  ],
+	"repository": {
+		"comments": {
+      "name": "comment.line.abb2",
+      "match": ";.*"
+    },
+		"keywords": {
+      "patterns": [
+        {
+          "name": "storage.type.abb2",
+          "match": "(?i)\\b(Macro|End Macro|Function|End Function|Statement|End Statement|Global|Local|Const|Dim|Type|End Type)\\b"
+        },
+        {
+          "match": "(?i)\\b(Shared)\\b",
+          "name": "storage.modifier.abb2"
+        },
+        {
+          "name": "keyword.control.abb2",
+          "match": "(?i)\\b(Break|Case|Default|Else|End|EndIf|Else|For|Forever|If|Then|Next|Repeat|Select|Step|To|Until|Wend|While|Pop)\\b"
+        },
+        {
+          "name": "entity.name.function.abb2",
+          "match": "(?i)\\b(And|Not|Or|XOr|MOD|LSR|LSL|ASR|ASL|JSR|BSR|RTS)\\b"
+        },
+        {
+          "name": "constant.language.abb2",
+          "match": "(?i)#([\\w_]+)\\b"
+        },
+        {
+          "name": "meta.preprocessor.abb2",
+          "match": "(?i)\\b(AMIGA|QAMIGA|BLITZ|CEND|CNIF|CSIF|CELSE|CERR|INCLUDE|INCBIN|INCDIR|XINCLUDE|XINCDIR|EVEN|DEFTYPE|NEWTYPE|USEPATH|Runerrson|Runerrsoff|USED|Addr|Maximum)\\b"
+        }
+      ]
+    },
+		"commands": {
+      "patterns": [
+        {
+          "name": "support.function.abb2",
+          "match": "(?i)\\b(WBStartUp|ShowBitmap)\\b"
+        }
+      ]
+    },
+		"strings": {
+      "name": "string.quoted.double.abb2",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.abb2",
+          "match": "\\\\."
+        }
+      ]
+    },
+		"numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.dec.abb2",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        },
+        {
+          "name": "constant.numeric.hex.abb2",
+          "match": "\\$[0-9a-fA-F]+\\b"
+        }
+      ]
+	  }
+  },
+	"scopeName": "source.abb2"
+}

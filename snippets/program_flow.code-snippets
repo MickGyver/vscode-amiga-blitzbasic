@@ -1,0 +1,102 @@
+{
+  "Goto program label": {
+    "prefix": "Goto",
+    "body": "Goto ${1}",
+    "description": ""
+  },
+  "Gosub program label": {
+    "prefix": "Gosub",
+    "body": "Gosub ${1}",
+    "description": ""
+  },
+  "Return from Gosub": {
+    "prefix": "Return",
+    "body": "Return",
+    "description": "Return from a Gosub jump."
+  },
+  "On Expression Goto|Gosub Program Label[,Program Label...]": {
+    "prefix": "On",
+    "body": "On ${1:Expression} ${1:Goto} ${3:Label} ${4}",
+    "description": "On allows a program to branch, via either a Goto or a Gosub, to one of a number of Program Labels depending upon the result of the specified Expression."
+  },
+  "End": {
+    "prefix": "End",
+    "body": "End",
+    "description": "End will halt program flow completely."
+  },
+  "EndIf": {
+    "prefix": "EndIf",
+    "body": "EndIf",
+    "description": ""
+  },
+  "For … Next": {
+    "prefix": "For",
+    "body": "For ${1:Var}=${2:Expression1} To ${3:Expression2}\n\t${4}\nNext",
+    "description": "For Var=Expression1 To Expression2 ... Next [var[,Var..]]"
+  },
+  "If … Then …": {
+    "prefix": "If",
+    "body": "If ${1} Then ${2}",
+    "description": ""
+  },
+  "If … EndIf": {
+    "prefix": "If",
+    "body": "If ${1}\n\t${2}\nEndIf",
+    "description": ""
+  },
+  "Else": {
+    "prefix": "Else",
+    "body": "Else",
+    "description": ""
+  },
+  "Statement implementation": {
+    "prefix": "Statement",
+    "body": "Statement${1} ${2:Unnamed}{${3}}\n\t${4:; Not implemented yet.}\nEnd Statement",
+    "description": ""
+  },
+  "Function implementation": {
+    "prefix": "Function",
+    "body": "Function .${1:type} ${2:Unnamed}{${3}}\n\t${4:; Not implemented yet.}\nEnd Function",
+    "description": ""
+  },
+  "Statement return": {
+    "prefix": "",
+    "body": "Statement Return",
+    "description": ""
+  },
+  "Function return": {
+    "prefix": "",
+    "body": "Function Return ${1}",
+    "description": ""
+  },
+  "Repeat … Forever": {
+    "prefix": "Re",
+    "body": "Repeat\n\t{$1}\nForever",
+    "description": ""
+  },
+  "Select <expression>": {
+    "prefix": "Select",
+    "body": "Select ${1:<expression>}\n\tCase ${2:<expression>}\n\t\t${3}\nEnd Select",
+    "description": "Select provides the ability to determine a quick choice."
+  },
+  "Case <expression>": {
+    "prefix": "Case",
+    "body": "Case ${1:<expression>}",
+    "description": ""
+  },
+  "Default": {
+    "prefix": "Default",
+    "body": "Default",
+    "description": ""
+  },
+  "While … Wend": {
+    "prefix": "While",
+    "body": "While $1\n  $2\nWend",
+    "description": ""
+  },
+  "Repeat … Until …": {
+    "prefix": "Re",
+    "body": "Repeat\n\t{$2}\nUntil ${1}",
+    "description": ""
+  }
+}
