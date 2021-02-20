@@ -1,3 +1,4 @@
+tools/**
 .vscode/**
 .vscode-test/**
 out/test/**

@@ -3,6 +3,10 @@
 	"displayName": "Amiga Blitz Basic 2",
 	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz",
 	"publisher" : "mickgyver",
+	"repository": {
+    "type": "git",
+    "url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
+  },
 	"icon" : "resources/images/bb2.png",
 	"version": "0.0.1",
 	"engines": {
