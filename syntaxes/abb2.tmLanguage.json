@@ -56,6 +56,26 @@
         {
           "name": "support.function.abb2",
           "match": "(?i)\\b(WBStartUp|ShowBitmap)\\b"
+        },
+        {
+          "match": "[^\\.](\\b\\w[\\w\\d]*|[^\\w]@[\\w\\d]*)\\(",
+          "captures":
+          {
+            "1":
+            {
+              "name": "entity.name.function.abb2"
+            }
+          }
+        },
+        {
+          "match": "[^\\.](\\b\\w[\\w\\d]*|[^\\w]@[\\w\\d]*)\\{",
+          "captures":
+          {
+            "1":
+            {
+              "name": "entity.name.function.abb2"
+            }
+          }
         }
       ]
     },

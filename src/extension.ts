@@ -13,32 +13,52 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	let runwinuae = vscode.commands.registerCommand('amiga-blitzbasic2.runwinuae', () => {
-        const editor = vscode.window.activeTextEditor;
-        const terminal = vscode.window.createTerminal(`Ext Terminal`);
-        terminal.show();
-		terminal.sendText(getPath()+"run.bat");
+        let path = getPath();
+        if(path.length > 0)
+        {
+            vscode.window.showInformationMessage('Running in WinUAE...');
+            const editor = vscode.window.activeTextEditor;
+            const terminal = vscode.window.createTerminal(`Ext Terminal`);
+            terminal.show();
+            terminal.sendText(path+"run.bat");
+        }
 	});
 	context.subscriptions.push(runwinuae);
 
     let runamiga = vscode.commands.registerCommand('amiga-blitzbasic2.runamiga', () => {
-		vscode.window.showInformationMessage('Running on Amiga...');
-        const editor = vscode.window.activeTextEditor;
-        const terminal = vscode.window.createTerminal(`Ext Terminal`);
-        terminal.show();
-		terminal.sendText(getPath()+"run_amiga.bat");
+        let path = getPath();
+        if(path.length > 0)
+        {
+            vscode.window.showInformationMessage('Running on Amiga...');
+            const editor = vscode.window.activeTextEditor;
+            const terminal = vscode.window.createTerminal(`Ext Terminal`);
+            terminal.show();
+            terminal.sendText(getPath()+"run_amiga.bat");
+        }
 	});
 	context.subscriptions.push(runamiga);
 
     let showhelp = vscode.commands.registerCommand('amiga-blitzbasic2.showhelp', () => {
         const editor = vscode.window.activeTextEditor;
         const terminal = vscode.window.createTerminal(`Ext Terminal`);
-        let cursorPosition = editor.selection.start;
-        let wordRange = editor.document.getWordRangeAtPosition(cursorPosition);
-        let highlight = editor.document.getText(wordRange);
+        if(editor === undefined)
+        {
+            vscode.window.showInformationMessage("Nothing to show help for...");
+        }
+        else
+        {
+            let cursorPosition = editor.selection.start;
+            let wordRange = editor.document.getWordRangeAtPosition(cursorPosition);
+            let highlight = editor.document.getText(wordRange);
 
-        //vscode.window.showInformationMessage("Showing Help for: "+highlight);
-        terminal.show();
-		terminal.sendText("BB2Doc " + highlight);
+            if(wordRange?.isSingleLine && highlight.length > 0 )
+            {
+                terminal.show();
+                terminal.sendText("BB2Doc " + highlight);
+            }
+            else
+                vscode.window.showInformationMessage("Nothing to show help for...");
+        }    
 	});
 	context.subscriptions.push(runamiga);
 
@@ -57,8 +77,15 @@ function getPath() : string {
     let path: string;
     if (!vscode.workspace.workspaceFolders) {
         if(vscode.workspace.rootPath === undefined) {
-            path = vscode.window.activeTextEditor.document.uri.fsPath;
-            path = path.substring(0,path.lastIndexOf("\\")+1);
+            if(vscode.window.activeTextEditor === undefined)
+            {
+                path = "";
+            }
+            else
+            {
+                path = vscode.window.activeTextEditor.document.uri.fsPath;
+                path = path.substring(0,path.lastIndexOf("\\")+1);
+            }          
         }
         else
             path = vscode.workspace.rootPath;
@@ -67,8 +94,9 @@ function getPath() : string {
         root = vscode.workspace.workspaceFolders[0];
         path = root.uri.fsPath;
     }
-    if(!path.endsWith("\\"))
+    if(!path.endsWith("\\") && path.length > 0)
         path += "\\";
+
     return path;
 }
 
