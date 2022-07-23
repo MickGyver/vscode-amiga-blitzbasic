@@ -29,10 +29,10 @@ Syntax highlighting is still very limited.
 
 ### 0.2.0
 - Integrated help documentation (Hover Mode) - No external tool dependencies.
-![contextual help](./resources/images/help.jpg)
+![contextual help](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/publishing/resources/images/help.jpg)
 
 - Launch bb2 compilation through arexx using native javascript - No external tool dependencies.
-![compil and run in UAE](./resources/images/compil.jpg)
+![compil and run in UAE](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/publishing/resources/images/compil.jpg)
 
 ### 0.1.0
 
