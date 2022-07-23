@@ -48,9 +48,6 @@ export function activate(context: vscode.ExtensionContext) {
                     if (command.parameters.toString().substring(0,2) != '\r\n') {
                         mds.appendMarkdown(' <span style="color:#9E622C;">'+command.parameters.toString()+'<span>');
                     }
-                    if (command.parameters.toString().substring(0,2) != '\r\n') {
-                        mds.appendMarkdown(' <span style="color:#9E622C;">'+command.parameters.toString()+'<span>');
-                    }
                     mds.appendMarkdown('\n\n');
                     if (command.shortDescription.toString().length>0) {
                         mds.appendMarkdown('_'+command.shortDescription.toString()+'_'); 
