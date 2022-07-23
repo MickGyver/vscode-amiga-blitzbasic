@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as xml2js from 'xml2js';
 var path = require("path");
+var net = require('net');
 
 
 
@@ -24,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
             result.bb2doc.command.forEach((val:any) => {
                 bb2doc[val.$.name.toString()]=val;
             });
-            vscode.window.showInformationMessage('Blitz Basic 2 documentation Loaded');
+            console.log('Blitz Basic 2 documentation Loaded');
         }
       });
 
@@ -64,23 +65,63 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let runwinuae = vscode.commands.registerCommand('amiga-blitzbasic2.runwinuae', () => {
+	let runuae = vscode.commands.registerCommand('amiga-blitzbasic2.runwinuae', () => {
         let file = getCurrentFile();
         if(file.length > 0)
         {
             vscode.window.showInformationMessage('Running in UAE...');
+            if (vscode.window.activeTextEditor != undefined) {
+
+                const destFile:string = vscode.window.activeTextEditor.document.fileName.replace('_asc','') // _asc file on vscode side, withour the_asc for Ted on the amiga.
+                if (fs.existsSync(destFile)) {
+                    fs.unlink(destFile, function (err) {if (err) { console.log(err);}} ); // delete if needed
+                }
+                fs.copyFile( vscode.window.activeTextEditor.document.fileName,destFile , fs.constants.COPYFILE_EXCL, (err) => {if (err) { console.log(err);}} );
+
+                console.log('Connecting in TCP (AUX:) to UAE');
+
+                const command:string = "rx S:blitzbasic2.rexx \"SharedCode:"+file.replace('_asc','')+"\"\r\n";
+            
+                var client  = new net.Socket();
+                client.connect({
+                port: 1234
+                });
+                
+                client.on('connect',function(){
+                    console.log('Client: connection established with server');
+                    // writing data to server
+                    client.write("copy SharedCode:blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                    client.write(command);
+
+                });
+                
+                client.setEncoding('utf8');
+                
+                client.on('data',function(data:any){
+                console.log('Data from server:' + data);
+                });
+                
+                setTimeout(function(){
+                client.end('Bye bye server');
+                },1000);
+
+            }
+            /*
+            Original :
             const editor = vscode.window.activeTextEditor;
             const terminal = vscode.window.createTerminal(`Ext Terminal`);
             terminal.show();
             terminal.sendText("mono WinUAEArexx.exe S:blitzbasic2.rexx 1000 \"SharedCode:"+file+"\"");
+            */
         }
 	});
-	context.subscriptions.push(runwinuae);
+	context.subscriptions.push(runuae);
 
     let runamiga = vscode.commands.registerCommand('amiga-blitzbasic2.runamiga', () => {
         let path = getCurrentFile();
         if(path.length > 0)
         {
+            //TODO to be updated with native js code
             vscode.window.showInformationMessage('Running on Amiga...');
             const editor = vscode.window.activeTextEditor;
             const terminal = vscode.window.createTerminal(`Ext Terminal`);
