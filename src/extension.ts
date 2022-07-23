@@ -16,12 +16,13 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 
     
+    console.log("Loading Blitz Basic 2 documentation...");
     let xml=fs.readFileSync(context.extensionPath+'/resources/bb2doc.xml','utf8');
-    let bb2doc=[];
+    let bb2doc: {[key: string]: any}=[];
     xml2js.parseString(xml, function (err, result) {
         if (result != undefined) {
-            result.bb2doc.command.forEach((val) => {
-                bb2doc[val.$.name]=val;
+            result.bb2doc.command.forEach((val:any) => {
+                bb2doc[val.$.name.toString()]=val;
             });
             vscode.window.showInformationMessage('Blitz Basic 2 documentation Loaded');
         }
