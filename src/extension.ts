@@ -16,9 +16,16 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 
+
+    const settings = vscode.workspace.getConfiguration('AmigaBlitzBasic2')
+
+    let sharedFolder =settings.sharedFolder;
+    if (sharedFolder.substring(sharedFolder.length-1,sharedFolder.length)) {
+        sharedFolder+=':';
+    }
     
     console.log("Loading Blitz Basic 2 documentation...");
-    let xml=fs.readFileSync(context.extensionPath+'/resources/bb2doc.xml','utf8');
+    let xml=fs.readFileSync(context.extensionPath+'/resources/doc/bb2doc.xml','utf8');
     let bb2doc: {[key: string]: any}=[];
     xml2js.parseString(xml, function (err, result) {
         if (result != undefined) {
@@ -70,27 +77,34 @@ export function activate(context: vscode.ExtensionContext) {
         if(file.length > 0)
         {
             vscode.window.showInformationMessage('Running in UAE...');
-            if (vscode.window.activeTextEditor != undefined) {
+            if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
 
-                const destFile:string = vscode.window.activeTextEditor.document.fileName.replace('_asc','') // _asc file on vscode side, withour the_asc for Ted on the amiga.
-                if (fs.existsSync(destFile)) {
-                    fs.unlink(destFile, function (err) {if (err) { console.log(err);}} ); // delete if needed
+                replaceFile(vscode.window.activeTextEditor.document.fileName,vscode.window.activeTextEditor.document.fileName.replace('_asc', '')); // _asc file on vscode side, without the_asc for Ted on the amiga.
+
+                let root;
+                root = vscode.workspace.workspaceFolders[0];
+                let out = root.uri.fsPath;
+                let dir = out + '/build';
+                if (!fs.existsSync(dir)) {
+                    fs.mkdirSync(dir, 0o744);
                 }
-                fs.copyFile( vscode.window.activeTextEditor.document.fileName,destFile , fs.constants.COPYFILE_EXCL, (err) => {if (err) { console.log(err);}} );
-
+                replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2.rexx',dir+'/blitzbasic2.rexx'); 
+                replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway'); 
+  
                 console.log('Connecting in TCP (AUX:) to UAE');
 
                 const command:string = "rx S:blitzbasic2.rexx \"SharedCode:"+file.replace('_asc','')+"\"\r\n";
             
                 var client  = new net.Socket();
                 client.connect({
-                port: 1234
+                port: settings.UAEPort
                 });
                 
                 client.on('connect',function(){
                     console.log('Client: connection established with server');
                     // writing data to server
-                    client.write("copy SharedCode:blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                    client.write("copy "+sharedFolder+"/build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                    client.write("copy "+sharedFolder+"/build/BB2NagAway C:\r\n"); 
                     client.write(command);
 
                 });
@@ -161,6 +175,17 @@ function getCurrentFile() : string {
     else {
         return "";
     }
+}
+
+function replaceFile(srcFile:string,destFile:string) {
+    if (fs.existsSync(destFile)) {
+        fs.unlink(destFile, function (err) { if (err) {
+            console.log(err);
+        } }); // delete if needed
+    }
+    fs.copyFile(srcFile, destFile, fs.constants.COPYFILE_EXCL, (err) => { if (err) {
+        console.log(err);
+    } });
 }
 
 class ABB2DocumentSymbolProvider implements vscode.DocumentSymbolProvider {

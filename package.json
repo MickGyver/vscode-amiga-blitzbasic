@@ -26,6 +26,21 @@
 		"capabilities": {
 			"hoverProvider": "true"
 		},
+		"configuration": {
+			"title": "Amiga Blitz Basic 2",
+			"properties": {
+			  "AmigaBlitzBasic2.sharedFolder": {
+				"type": "string",
+				"default": "SharedCode",
+				"description": "Virtual harddrive volume name in UAE (if not present the `:` wil be added automatically). It the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match to your workspace path."
+			  },
+			  "AmigaBlitzBasic2.UAEPort": {
+				"type": "number",
+				"default": 1234,
+				"description": "UAE serial direct connection port for AUX: mount."
+			  }
+			}
+		},
 		"commands": [
 			{
 				"command": "amiga-blitzbasic2.runwinuae",
