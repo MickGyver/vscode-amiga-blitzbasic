@@ -5,10 +5,10 @@
 	"publisher": "youenchene",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
+		"url": "https://github.com/youenchene/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.2.2",
+	"version": "0.3.1",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
