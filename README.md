@@ -27,6 +27,11 @@ Syntax highlighting is still very limited.
 
 ## Release Notes
 
+## [0.3.0 ]
+- Extension Settings: shared folder volume name in AmigaOS.
+- Extension UAE serial port for direct connection.
+- blitzbasic2.rexx and BB2NagAway integrated in extension and copied automatically in AmigaOS.
+- 
 ### 0.2.0
 - Integrated help documentation (Hover Mode) - No external tool dependencies.
 ![contextual help](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/publishing/resources/images/help.jpg)
