@@ -1,14 +1,14 @@
 {
-	"name": "amiga-blitzbasic2",
-	"displayName": "Amiga Blitz Basic 2",
-	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz",
-	"publisher": "MickGyver",
+	"name": "amiga-blitzbasic2-v2",
+	"displayName": "Amiga Blitz Basic 2 - v2 - Test Version",
+	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz - Native javascript version.",
+	"publisher": "youenchene",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
+		"url": "https://github.com/youenchene/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.2.0",
+	"version": "0.3.1",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -25,6 +25,21 @@
 	"contributes": {
 		"capabilities": {
 			"hoverProvider": "true"
+		},
+		"configuration": {
+			"title": "Amiga Blitz Basic 2",
+			"properties": {
+			  "AmigaBlitzBasic2.sharedFolder": {
+				"type": "string",
+				"default": "SharedCode",
+				"description": "Virtual harddrive volume name in UAE (if not present the `:` wil be added automatically). It the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match to your workspace path."
+			  },
+			  "AmigaBlitzBasic2.UAEPort": {
+				"type": "number",
+				"default": 1234,
+				"description": "UAE serial direct connection port for AUX: mount."
+			  }
+			}
 		},
 		"commands": [
 			{
