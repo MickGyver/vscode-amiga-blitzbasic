@@ -79,7 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showInformationMessage('Running in UAE...');
             if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
 
-                replaceFile(vscode.window.activeTextEditor.document.fileName,vscode.window.activeTextEditor.document.fileName.replace('_asc', '')); // _asc file on vscode side, without the_asc for Ted on the amiga.
+                replaceFile(vscode.window.activeTextEditor.document.fileName,vscode.window.activeTextEditor.document.fileName.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
 
                 let root;
                 root = vscode.workspace.workspaceFolders[0];
@@ -93,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
   
                 console.log('Connecting in TCP (AUX:) to UAE');
 
-                const command:string = "rx S:blitzbasic2.rexx \"SharedCode:"+file.replace('_asc','')+"\"\r\n";
+                const command:string = "rx S:blitzbasic2.rexx \"SharedCode:"+file.replace('.bba','.bb2')+"\"\r\n";
             
                 var client  = new net.Socket();
                 client.connect({

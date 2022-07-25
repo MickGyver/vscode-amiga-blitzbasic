@@ -1,6 +1,6 @@
 {
 	"name": "amiga-blitzbasic2-v2",
-	"displayName": "Amiga Blitz Basic 2 - v2 - Test Version",
+	"displayName": "Amiga Blitz Basic 2 - Javascript Native Edition",
 	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz - Native javascript version.",
 	"publisher": "youenchene",
 	"repository": {
@@ -8,7 +8,7 @@
 		"url": "https://github.com/youenchene/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -49,10 +49,6 @@
 			{
 				"command": "amiga-blitzbasic2.runamiga",
 				"title": "BB2: Run on Amiga"
-			},
-			{
-				"command": "amiga-blitzbasic2.showhelp",
-				"title": "BB2: Show Help"
 			}
 		],
 		"languages": [
