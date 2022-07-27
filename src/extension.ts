@@ -79,56 +79,71 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showInformationMessage('Running in UAE...');
             if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
 
-                vscode.window.activeTextEditor.document.save();
+                const ext=path.extname(vscode.window.activeTextEditor.document.fileName)
+                
+                if (ext == '.bb' || ext == '.bb2' || ext == '.bba') {
 
-                replaceFile(vscode.window.activeTextEditor.document.fileName,vscode.window.activeTextEditor.document.fileName.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
+                    vscode.window.activeTextEditor.document.save();
 
-                let root;
-                root = vscode.workspace.workspaceFolders[0];
-                let out = root.uri.fsPath;
-                let dir = out + '/build';
-                if (!fs.existsSync(dir)) {
-                    fs.mkdirSync(dir, 0o744);
+                    const folder=path.dirname(vscode.window.activeTextEditor.document.fileName)
+                    const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName)
+                    const currentSubfolder= file.substring(0,file.length-mainFile.length)
+                    let includes: string[]=[];
+                    var files = fs.readdirSync(folder);
+                    files.forEach((f) => {
+                        if (path.extname(f)=='.bba') {
+                        replaceFile(folder+'/'+f,folder+'/'+f.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
+                        if (f!= mainFile) {
+                            includes.push(sharedFolder+currentSubfolder+f.replace('.bba','.bb2'))
+                        }
+                        }
+                    });
+                    const root = vscode.workspace.workspaceFolders[0];
+                    let out = root.uri.fsPath;
+                    let dir = out + '/build';
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir, 0o744);
+                    }
+                    replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2.rexx',dir+'/blitzbasic2.rexx'); 
+                    replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway'); 
+    
+                    console.log('Connecting in TCP (AUX:) to UAE');
+
+                    let command:string = "rx S:blitzbasic2.rexx ";
+                    command+=" \""+sharedFolder+file.replace('.bba','.bb2')+"\"";
+                    includes.forEach((include) => {
+                        command+=" \""+include+"\"";
+                    });
+                    command+="\r\n";
+
+                    console.log(command);
+                
+                    var client  = new net.Socket();
+                    client.connect({
+                    port: settings.UAEPort
+                    });
+                    
+                    client.on('connect',function(){
+                        console.log('Client: connection established with server');
+                        // writing data to server
+                        client.write("copy "+sharedFolder+"/build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                        client.write("copy "+sharedFolder+"/build/BB2NagAway C:\r\n"); 
+                        client.write(command);
+
+                    });
+                    
+                    client.setEncoding('utf8');
+                    
+                    client.on('data',function(data:any){
+                    console.log('Data from server:' + data);
+                    });
+                    
+                    setTimeout(function(){
+                    client.end('Bye bye server');
+                    },1000);
+
                 }
-                replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2.rexx',dir+'/blitzbasic2.rexx'); 
-                replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway'); 
-  
-                console.log('Connecting in TCP (AUX:) to UAE');
-
-                const command:string = "rx S:blitzbasic2.rexx \"SharedCode:"+file.replace('.bba','.bb2')+"\"\r\n";
-            
-                var client  = new net.Socket();
-                client.connect({
-                port: settings.UAEPort
-                });
-                
-                client.on('connect',function(){
-                    console.log('Client: connection established with server');
-                    // writing data to server
-                    client.write("copy "+sharedFolder+"/build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
-                    client.write("copy "+sharedFolder+"/build/BB2NagAway C:\r\n"); 
-                    client.write(command);
-
-                });
-                
-                client.setEncoding('utf8');
-                
-                client.on('data',function(data:any){
-                console.log('Data from server:' + data);
-                });
-                
-                setTimeout(function(){
-                client.end('Bye bye server');
-                },1000);
-
             }
-            /*
-            Original :
-            const editor = vscode.window.activeTextEditor;
-            const terminal = vscode.window.createTerminal(`Ext Terminal`);
-            terminal.show();
-            terminal.sendText("mono WinUAEArexx.exe S:blitzbasic2.rexx 1000 \"SharedCode:"+file+"\"");
-            */
         }
 	});
 	context.subscriptions.push(runuae);

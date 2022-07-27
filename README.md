@@ -95,13 +95,14 @@ By default, the folder is named **SharedCode** so the virtual  harddrive can be 
 
 Syntax highlighting is still very limited.
 
-One file code. (for the moment).
-
 Run to Amiga is not implemented and tested yet in this version.
+
+Random couldn't open file error on Ted/Blitz2.
 
 ## Release Notes
 
-
+## 0.4.0
+- Manage projet with multiple .bba files and includes.
 ## 0.3.3
 - Save document on run UAE.
 ## 0.3.2
