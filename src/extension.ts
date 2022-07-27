@@ -79,6 +79,8 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showInformationMessage('Running in UAE...');
             if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
 
+                vscode.window.activeTextEditor.document.save();
+
                 replaceFile(vscode.window.activeTextEditor.document.fileName,vscode.window.activeTextEditor.document.fileName.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
 
                 let root;

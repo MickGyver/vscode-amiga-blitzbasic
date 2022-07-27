@@ -2,6 +2,9 @@
 
 This extension adds language support for the Amiga version of Blitz Basic 2 (and Amiblitz). The extension is in alpha state so syntax highlighting is still limited.
 
+## TL;DR
+
+To run your blitz basic 2 program on WInUAE use the shortcut `Ctrl-F5` (Win, Linux) or `Cmd-F5`(Mac).
 
 ## Note
 
@@ -98,18 +101,17 @@ Run to Amiga is not implemented and tested yet in this version.
 
 ## Release Notes
 
-## [0.3.2 ]
-- Documentation
 
-## [0.3.0 ]
+## 0.3.3
+- Save document on run UAE.
+## 0.3.2
+- Documentation
+## 0.3.0
 - Extension Settings: shared folder volume name in AmigaOS.
 - Extension Settings: UAE serial port for direct connection.
 - blitzbasic2.rexx and BB2NagAway integrated in extension and copied automatically in AmigaOS.
-
 ### 0.2.0
 - Integrated help documentation (Hover Mode) - No external tool dependencies.
 - Launch bb2 compilation through arexx using native javascript - No external tool dependencies.
-
 ### 0.1.0
-
 - Initial alpha release
