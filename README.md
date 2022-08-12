@@ -4,7 +4,16 @@ This extension adds language support for the Amiga version of Blitz Basic 2 (and
 
 ## TL;DR
 
-To run your blitz basic 2 program on WInUAE use the shortcut `Ctrl-F5` (Win, Linux) or `Cmd-F5`(Mac).
+**!! NEW KEY BINDING !!**
+
+
+To open and run your current blitz basic 2 program on UAE use the shortcut `Ctrl-F6` (Win, Linux) or `Cmd-F6`(Mac).
+
+To open all your current folder blitz basic 2 files (.bba) program on UAE use the shortcut `Ctrl-F7` (Win, Linux) or `Cmd-F7`(Mac).
+
+To open all your current folder blitz basic 2 files  AND to run your current blitz basic 2 program on UAE use the shortcut `Ctrl-F8` (Win, Linux) or `Cmd-F8`(Mac).
+
+Run on real Amiga is deactivated (need the proper serial cable to test it).
 
 ## Note
 
@@ -100,6 +109,10 @@ Run to Amiga is not implemented and tested yet in this version.
 Random couldn't open file error on Ted/Blitz2.
 
 ## Release Notes
+
+
+## 0.5.0
+- New keybindings
 
 ## 0.4.0
 - Manage projet with multiple .bba files and includes.

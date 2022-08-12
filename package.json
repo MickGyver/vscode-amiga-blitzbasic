@@ -1,14 +1,14 @@
 {
 	"name": "amiga-blitzbasic2-v2",
 	"displayName": "Amiga Blitz Basic 2 - Javascript Native Edition",
-	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz - Native javascript version.",
+	"description": "Language Support for Amiga Blitz Basic 2 - Native javascript version.",
 	"publisher": "youenchene",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/youenchene/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -17,8 +17,9 @@
 	],
 	"activationEvents": [
 		"onLanguage:abb2",
-		"onCommand:amiga-blitzbasic2.runwinuae",
-		"onCommand:amiga-blitzbasic2.runamiga"
+		"onCommand:amiga-blitzbasic2.runuae",
+		"onCommand:amiga-blitzbasic2.openalluae",
+		"onCommand:amiga-blitzbasic2.runalluae"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -42,12 +43,16 @@
 		},
 		"commands": [
 			{
-				"command": "amiga-blitzbasic2.runwinuae",
-				"title": "BB2: Run in WinUAE"
+				"command": "amiga-blitzbasic2.runuae",
+				"title": "BB2: Run current file in UAE"
 			},
 			{
-				"command": "amiga-blitzbasic2.runamiga",
-				"title": "BB2: Run on Amiga"
+				"command": "amiga-blitzbasic2.openalluae",
+				"title": "BB2: Open all files in UAE"
+			},
+			{
+				"command": "amiga-blitzbasic2.runalluae",
+				"title": "BB2: Open all files and run current in UAE"
 			}
 		],
 		"languages": [
@@ -88,21 +93,21 @@
 		],
 		"keybindings": [
 			{
-				"command": "amiga-blitzbasic2.showhelp",
-				"key": "ctrl+f1",
-				"mac": "cmd+f1",
-				"when": "editorTextFocus"
-			},
-			{
-				"command": "amiga-blitzbasic2.runwinuae",
-				"key": "ctrl+f5",
-				"mac": "cmd+f5",
-				"when": "editorTextFocus"
-			},
-			{
-				"command": "amiga-blitzbasic2.runamiga",
+				"command": "amiga-blitzbasic2.runuae",
 				"key": "ctrl+f6",
 				"mac": "cmd+f6",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "amiga-blitzbasic2.openalluae",
+				"key": "ctrl+f7",
+				"mac": "cmd+f7",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "amiga-blitzbasic2.runalluae",
+				"key": "ctrl+f8",
+				"mac": "cmd+f8",
 				"when": "editorTextFocus"
 			}
 		]

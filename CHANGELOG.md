@@ -2,6 +2,8 @@
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
 
+## [0.5.0 ] - 2022-08-12
+- New keybindings
 ## [0.4.0 ] - 2022-07-27
 - Manage projet with multiple .bba files and includes.
 ## [0.3.3 ] - 2022-07-27
