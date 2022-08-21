@@ -65,7 +65,7 @@ All OS support VSCode and UAE(or a real Amiga).
 
 ![Outline](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/outline.jpg)
 
-![GoToSymbol](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/GoToSymbol.jpg)
+![GoToSymbol](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/gotosymbol.jpg)
 
 ## Requirements
 
