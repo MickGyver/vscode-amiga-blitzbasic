@@ -49,12 +49,23 @@ All OS support VSCode and UAE(or a real Amiga).
 - Snippets for most Blitz Basic 2 functions and methods.
 - Outline shows macros, labels, functions and statements.
 - Integrated help.
+
 ![contextual help](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/help.jpg)
+
 - Commands for running the app/game in WinUAE or FSUAE. (ony requires blitzbasic2.rexx and amiga os config in command line tools, see below).
+
 ![compil and run into UAE](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/compil.jpg)
+
 - Commands for running the app/game on a real Amiga (requires command line tools, see below).
 - Settings to tune the integration to your UAE :
+
 ![Extension Settings](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/settings.jpg)
+
+- Outline View and `Go to Symbol` (Cmd/Ctrl + Shift + O) integration.
+
+![Outline](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/outline.jpg)
+
+![GoToSymbol](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/GoToSymbol.jpg)
 
 ## Requirements
 
@@ -110,10 +121,10 @@ Random couldn't open file error on Ted/Blitz2.
 
 ## Release Notes
 
-
+# 0.6.0
+- Blitz Basic 2 Label, NewType, Statement, Function and Macro are now showing up in the Outline view and Go to Symbol..
 ## 0.5.0
 - New keybindings
-
 ## 0.4.0
 - Manage projet with multiple .bba files and includes.
 ## 0.3.3

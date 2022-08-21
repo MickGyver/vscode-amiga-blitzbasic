@@ -2,6 +2,8 @@
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
 
+## [0.6.0 ] - 2022-08-21
+- Blitz Basic 2 Label, NewType, Statement, Function and Macro are now showing up in the Outline view and Go to Symbol..
 ## [0.5.0 ] - 2022-08-12
 - New keybindings
 ## [0.4.0 ] - 2022-07-27

@@ -8,7 +8,7 @@
 		"url": "https://github.com/youenchene/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -24,7 +24,8 @@
 	"main": "./out/extension.js",
 	"contributes": {
 		"capabilities": {
-			"hoverProvider": "true"
+			"hoverProvider": "true",
+			"documentSymbolProvider" : "true"
 		},
 		"configuration": {
 			"title": "Amiga Blitz Basic 2",

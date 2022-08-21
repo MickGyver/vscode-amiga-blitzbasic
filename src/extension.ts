@@ -40,6 +40,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Congratulations, your extension "Amiga Blitz Basic 2" is now active!');
 
+    context.subscriptions.push(
+        vscode.languages.registerDocumentSymbolProvider(
+            BB2_MODE, new GoDocumentSymbolProvider()));
 
     vscode.languages.registerHoverProvider('abb2', {
         provideHover(document, position, token) {
@@ -325,6 +328,72 @@ class ABB2DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                     nodes[nodes.length-1].push(marker_symbol)
 				}
             }
+            resolve(symbols);
+        });
+    }
+}
+
+class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
+    public provideDocumentSymbols(document: vscode.TextDocument,
+            token: vscode.CancellationToken): Thenable<vscode.SymbolInformation[]> {
+        return new Promise((resolve, reject) => {
+            var symbols: vscode.SymbolInformation[]= [];
+            for (var i = 0; i < document.lineCount; i++) {
+                var line = document.lineAt(i);
+                if (line.text.startsWith(".") && line.text.includes(":")) {
+                    let stra: string[]=line.text.split(".", 2);
+                    let strb: string[]=stra[1].split(":", 1);
+                    symbols.push(new vscode.SymbolInformation(
+                        strb[0],
+                        vscode.SymbolKind.Module,
+                        "GoSub",
+                       new vscode.Location(document.uri,line.range)
+                    ))
+                }
+                if (line.text.toLowerCase().startsWith("statement")) {
+                    console.log('Line selected');
+                    console.log(line.text);
+                    let stra: string[]=line.text.split(" ", 2);
+                    let strb: string[]=stra[1].split("{", 1);
+                    symbols.push(new vscode.SymbolInformation(
+                        strb[0],
+                        vscode.SymbolKind.Method,
+                        "Statement",
+                       new vscode.Location(document.uri,line.range)
+                    ))
+                }
+                if (line.text.toLowerCase().startsWith("function")) {
+                    let stra: string[]=line.text.split(" ", 2);
+                    let strb: string[]=stra[1].split("{", 1);
+                    symbols.push(new vscode.SymbolInformation(
+                        strb[0],
+                        vscode.SymbolKind.Function,
+                        "Function",
+                       new vscode.Location(document.uri,line.range)
+                    ))
+                }
+                if (line.text.toLowerCase().startsWith("macro")) {
+                    let stra: string[]=line.text.split(" ", 2);
+                    let strb: string[]=stra[1].split("{", 1);
+                    symbols.push(new vscode.SymbolInformation(
+                        strb[0],
+                        vscode.SymbolKind.Function,
+                        "Macro",
+                       new vscode.Location(document.uri,line.range)
+                    ))
+                }
+                if (line.text.toLowerCase().startsWith("newtype")) {
+                    let stra: string[]=line.text.split(" ", 2);
+                    let strb: string[]=stra[1].split(".", 2);
+                    symbols.push(new vscode.SymbolInformation(
+                        strb[1],
+                        vscode.SymbolKind.Struct,
+                        "Type",
+                       new vscode.Location(document.uri,line.range)
+                    ))
+                }
+            }
+
             resolve(symbols);
         });
     }
