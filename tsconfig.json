@@ -2,7 +2,10 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es6",
-		"outDir": "out",
+		"outDir": "./out",
+		"allowJs": true,
+		"checkJs": false,
+		"resolveJsonModule": true,
 		"lib": [
 			"es6"
 		],
@@ -17,6 +20,7 @@
 	},
 	"exclude": [
 		"node_modules",
-		".vscode-test"
+		".vscode-test",
+		"out"
 	]
 }

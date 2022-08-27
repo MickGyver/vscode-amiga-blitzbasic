@@ -3,8 +3,10 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as xml2js from 'xml2js';
-var path = require("path");
+var path = require('path');
 var net = require('net');
+import Adf from './adfFS';
+import { stringify } from 'querystring';
 
 
 
@@ -89,6 +91,11 @@ export function activate(context: vscode.ExtensionContext) {
         runAndLoadInUAE(context,settings,sharedFolder,true,true);
 	});
 	context.subscriptions.push(runalluae);
+
+    let buildADFCommand = vscode.commands.registerCommand('amiga-blitzbasic2.buildADF', () => {
+        buildADF(context,settings,sharedFolder);
+	});
+	context.subscriptions.push(buildADFCommand);
 
 	context.subscriptions.push(
         vscode.languages.registerDocumentSymbolProvider(
@@ -203,7 +210,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 });
                 
                 setTimeout(function(){
-                console.log(outData);
+                console.log(out);
                 client.end('Bye bye server');
                 },1000);
 
@@ -351,8 +358,6 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                     ))
                 }
                 if (line.text.toLowerCase().startsWith("statement")) {
-                    console.log('Line selected');
-                    console.log(line.text);
                     let stra: string[]=line.text.split(" ", 2);
                     let strb: string[]=stra[1].split("{", 1);
                     symbols.push(new vscode.SymbolInformation(
@@ -397,4 +402,119 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
             resolve(symbols);
         });
     }
+}
+
+function buildADF(context: vscode.ExtensionContext,settings:vscode.WorkspaceConfiguration,sharedFolder:string) {
+    let file = getCurrentFile();
+    if(file.length > 0)
+    {
+        if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
+
+            vscode.window.showInformationMessage('Building ADF...');
+
+            
+
+            const folder=path.dirname(vscode.window.activeTextEditor.document.fileName)
+            const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName)
+            const currentSubfolder= file.substring(0,file.length-mainFile.length)
+            const root = vscode.workspace.workspaceFolders[0];
+            let dir = root.uri.fsPath+"/"+currentSubfolder + 'build';
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, 0o744);
+            }
+            let packagingConfig:any=null
+            if (fs.existsSync(folder+"/packaging.json")) {
+                packagingConfig = JSON.parse(fs.readFileSync(folder+"/packaging.json", 'utf-8'))
+            }
+
+            const adf=new Adf();
+
+            
+            const adfSrc2=dir + '/test2.adf'
+            var myArrayBuffer2=fs.readFileSync(adfSrc2).buffer
+            adf.loadDisk(myArrayBuffer2, function(success:any){
+                if (success){
+                    var info = adf.getInfo();
+                }
+            });
+            
+            
+            
+            //init ADF
+            const adfSrc=context.extensionPath + '/resources/packaging/blank.adf';
+            const adfPath=dir+'/'+mainFile.replace('bba','adf');
+            
+            var myArrayBuffer=fs.readFileSync(adfSrc).buffer
+            adf.loadDisk(myArrayBuffer, function(success:any){
+                if (success){
+                    var info = adf.getInfo();
+                    if (info.diskFormat == "DOS"){
+                        //let res=adf.readRootFolder()
+                        //List
+                        if (packagingConfig) {
+                            if (packagingConfig.filesToIncludeOnRoot) {
+                                packagingConfig.filesToIncludeOnRoot.forEach((fileToAdd:string) => {
+                                    uploadAdf(folder+"/"+fileToAdd,adf.rootSector,adf)
+                                });  
+                            }
+                            if (packagingConfig.foldersToInclude) {
+                                packagingConfig.foldersToInclude.forEach((folderToAdd:string) => {
+                                    uploadFolder(folder,folderToAdd,adf.rootSector,adf)
+                                });  
+                            }
+                        }
+
+                        // Write target disk.
+                        const outDisk=adf.getDisk()
+                        // delete target if needed
+                        if (fs.existsSync(adfPath)) {
+                            fs.unlink(adfPath, function (err) { if (err) {
+                                console.log(err);
+                            } });
+                        }
+                        var writeStream = fs.createWriteStream(adfPath);
+                        writeStream.write(toBuffer(outDisk.buffer))
+                        writeStream. end();
+                        vscode.window.showInformationMessage('ADF Ready!');
+                    }
+                }
+            }
+            ); 
+        }
+    }
+}
+
+function uploadFolder(folderPath:string,folderName:string,sector:any,adfDisk:any) {
+    const folderSector=adfDisk.createFolder(folderName,sector);
+    fs.readdir(folderPath+"/"+folderName, (err, files) => {
+        files.forEach(fileToAdd => {
+            const srcFile=folderPath+"/"+folderName+"/"+fileToAdd;
+            const isDir = fs.existsSync(srcFile) && fs.lstatSync(srcFile).isDirectory();
+            if (isDir) {
+                uploadFolder(folderPath+"/"+folderName,fileToAdd,folderSector,adfDisk)
+            } else {
+                if (fileToAdd != ".DS_Store") {
+                    uploadAdf(srcFile,folderSector,adfDisk)
+                }
+            }
+        });
+      });
+}
+
+function uploadAdf(srcFile:string,folderSector:any,adfDisk:any) {
+    if (fs.existsSync(srcFile)) {
+        const bufferFile=new Uint8Array(fs.readFileSync(srcFile))
+        adfDisk.writeFile(path.basename(srcFile),bufferFile,folderSector)
+    } else {
+        console.log("Can't find file, skip.")
+    }
+}
+
+function toBuffer(ab:ArrayBuffer) {
+    const buf = Buffer.alloc(ab.byteLength);
+    const view = new Uint8Array(ab);
+    for (let i = 0; i < buf.length; ++i) {
+        buf[i] = view[i];
+    }
+    return buf;
 }
