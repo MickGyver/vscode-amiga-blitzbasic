@@ -418,87 +418,107 @@ function buildADF(context: vscode.ExtensionContext,settings:vscode.WorkspaceConf
             const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName)
             const currentSubfolder= file.substring(0,file.length-mainFile.length)
             const root = vscode.workspace.workspaceFolders[0];
-            let dir = root.uri.fsPath+"/"+currentSubfolder + 'build';
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, 0o744);
+            let dirBuild = root.uri.fsPath+"/"+currentSubfolder + 'build';
+            if (!fs.existsSync(dirBuild)) {
+                fs.mkdirSync(dirBuild, 0o744);
             }
             let packagingConfig:any=null
             if (fs.existsSync(folder+"/packaging.json")) {
                 packagingConfig = JSON.parse(fs.readFileSync(folder+"/packaging.json", 'utf-8'))
             }
 
-            const adf=new Adf();
-
-            
-            const adfSrc2=dir + '/test2.adf'
+            /*
+            const adf2=new Adf();
+         const adfSrc2=dir + '/blower.adf'
             var myArrayBuffer2=fs.readFileSync(adfSrc2).buffer
-            adf.loadDisk(myArrayBuffer2, function(success:any){
+            adf2.loadDisk(myArrayBuffer2, function(success:any){
                 if (success){
-                    var info = adf.getInfo();
+                    var info = adf2.getInfo();
                 }
             });
+            */
             
-            
-            
-            //init ADF
-            const adfSrc=context.extensionPath + '/resources/packaging/blank.adf';
-            const adfPath=dir+'/'+mainFile.replace('bba','adf');
-            
-            var myArrayBuffer=fs.readFileSync(adfSrc).buffer
-            adf.loadDisk(myArrayBuffer, function(success:any){
-                if (success){
-                    var info = adf.getInfo();
-                    if (info.diskFormat == "DOS"){
-                        //let res=adf.readRootFolder()
-                        //List
-                        if (packagingConfig) {
-                            if (packagingConfig.filesToIncludeOnRoot) {
-                                packagingConfig.filesToIncludeOnRoot.forEach((fileToAdd:string) => {
-                                    uploadAdf(folder+"/"+fileToAdd,adf.rootSector,adf)
-                                });  
-                            }
-                            if (packagingConfig.foldersToInclude) {
-                                packagingConfig.foldersToInclude.forEach((folderToAdd:string) => {
-                                    uploadFolder(folder,folderToAdd,adf.rootSector,adf)
-                                });  
-                            }
-                        }
+            if (packagingConfig) {
+                packagingConfig.supports.forEach((support:any) => {
+                    if (support.type=="adf") {
 
-                        // Write target disk.
-                        const outDisk=adf.getDisk()
-                        // delete target if needed
-                        if (fs.existsSync(adfPath)) {
-                            fs.unlink(adfPath, function (err) { if (err) {
-                                console.log(err);
-                            } });
+                        const adf=new Adf();
+                        //init ADF
+
+                        let adfSrc=context.extensionPath + '/resources/packaging/blank.adf';
+                        if (support.boot) {
+                            adfSrc=context.extensionPath + '/resources/packaging/boot.adf';
                         }
-                        var writeStream = fs.createWriteStream(adfPath);
-                        writeStream.write(toBuffer(outDisk.buffer))
-                        writeStream. end();
-                        vscode.window.showInformationMessage('ADF Ready!');
+                        const adfPath=dirBuild+'/'+support.supportName+'.adf';            
+                        
+                        var myArrayBuffer=fs.readFileSync(adfSrc).buffer
+                        adf.loadDisk(myArrayBuffer, function(success:any){
+                            if (success){
+                                var info = adf.getInfo();
+                                if (info.diskFormat == "DOS"){
+                                    
+                                    adf.setDiskName(support.supportName);
+                                    if (support.filesToIncludeOnRoot) {
+                                        support.filesToIncludeOnRoot.forEach((fileToAdd:string) => {
+                                            uploadAdf(folder+"/"+fileToAdd,adf.rootSector,adf)
+                                        });  
+                                    }
+                                    if (support.foldersToInclude) {
+                                        support.foldersToInclude.forEach((folderToAdd:string) => {
+                                            uploadFolder(folder,folderToAdd,adf.rootSector,adf)
+                                        });  
+                                    }
+
+                                    const sFolderSector=adf.createFolder("S",adf.rootSector);
+                                    let startupSequence=fs.readFileSync(context.extensionPath+'/resources/packaging/startup-sequence','utf-8');
+                                    startupSequence=startupSequence.replace('%exe%',support.exeToLaunch);
+                                    fs.writeFileSync(dirBuild+'/startup-sequence',new Uint8Array(Buffer.from(startupSequence)),'utf-8');
+                                    uploadAdf(dirBuild+'/startup-sequence',sFolderSector,adf)
+
+                                    const libsFolderSector=adf.createFolder("Libs",adf.rootSector);
+                                    if (support.includeDiskFontLibrary) {
+                                        uploadAdf(context.extensionPath+'/resources/packaging/diskfont.library',libsFolderSector,adf)
+                                    }
+                                    if (support.includeMathTransLibrary) {
+                                        uploadAdf(context.extensionPath+'/resources/packaging/mathtrans.library',libsFolderSector,adf)
+                                    }
+
+                                    // Write target disk.
+                                    const outDisk=adf.getDisk()
+                                    // delete target if needed
+                                    if (fs.existsSync(adfPath)) {
+                                        fs.unlink(adfPath, function (err) { if (err) {
+                                            console.log(err);
+                                        } });
+                                    }
+                                    var writeStream = fs.createWriteStream(adfPath);
+                                    writeStream.write(toBuffer(outDisk.buffer))
+                                    writeStream.end();
+                                    vscode.window.showInformationMessage('ADF Ready for support : '+support.supportName+' !');
+                                }
+                            }
+                        }); 
                     }
-                }
+                });
             }
-            ); 
         }
     }
 }
 
-function uploadFolder(folderPath:string,folderName:string,sector:any,adfDisk:any) {
+function uploadFolder(folderPath:string,folderName:string,sector:any,adfDisk:any){
     const folderSector=adfDisk.createFolder(folderName,sector);
-    fs.readdir(folderPath+"/"+folderName, (err, files) => {
-        files.forEach(fileToAdd => {
-            const srcFile=folderPath+"/"+folderName+"/"+fileToAdd;
-            const isDir = fs.existsSync(srcFile) && fs.lstatSync(srcFile).isDirectory();
-            if (isDir) {
-                uploadFolder(folderPath+"/"+folderName,fileToAdd,folderSector,adfDisk)
-            } else {
-                if (fileToAdd != ".DS_Store") {
-                    uploadAdf(srcFile,folderSector,adfDisk)
-                }
+    let files=fs.readdirSync(folderPath+"/"+folderName);
+    files.forEach(fileToAdd => {
+        const srcFile=folderPath+"/"+folderName+"/"+fileToAdd;
+        const isDir = fs.existsSync(srcFile) && fs.lstatSync(srcFile).isDirectory();
+        if (isDir) {
+            uploadFolder(folderPath+"/"+folderName,fileToAdd,folderSector,adfDisk)
+        } else {
+            if (fileToAdd != ".DS_Store") {
+                uploadAdf(srcFile,folderSector,adfDisk)
             }
-        });
-      });
+        }
+    });
 }
 
 function uploadAdf(srcFile:string,folderSector:any,adfDisk:any) {

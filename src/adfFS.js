@@ -1,3 +1,5 @@
+// Forked and fixed from https://github.com/steffest/ADF-reader-writer/blob/master/script/adf.js
+
 export default class Adf {
 
     constructor()
@@ -78,6 +80,15 @@ export default class Adf {
 
 		return "EMPTY (or this is not a DOS disk)"
 	};
+
+
+	// @ts-ignore
+	setDiskName (name){
+		this.disk.goto((this.rootSector * this.SectorSize) + this.SectorSize - 80);
+		var nameLength = name.length
+		this.disk.writeUbyte(nameLength);
+		this.disk.writeString(name);
+	}
 
 	// @ts-ignore
 	writeFile (name,buffer,folder){
@@ -749,7 +760,7 @@ export default class Adf {
 		this.disk.goto((sector * this.SectorSize) + this.SectorSize - 12);
 		this.disk.writeUint(block.parent);
 		this.disk.writeUint(block.dataBlockExtension);
-		this.disk.writeUint(4294967293); //YCH : wtf? ??? blockTypeId = 4294967293; // -3
+		this.disk.writeUint(4294967293); // -3
 
 
 
