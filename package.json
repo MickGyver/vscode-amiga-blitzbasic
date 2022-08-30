@@ -1,11 +1,11 @@
 {
-	"name": "amiga-blitzbasic2-v2",
-	"displayName": "Amiga Blitz Basic 2 - Javascript Native Edition",
-	"description": "Language Support for Amiga Blitz Basic 2 - Native javascript version.",
-	"publisher": "youenchene",
+	"name": "amiga-blitzbasic2",
+	"displayName": "Amiga Blitz Basic 2",
+	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz, with native javascript improvements by youenchene.",
+	"publisher" : "MickGyver",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/youenchene/vscode-amiga-blitzbasic.git"
+    "url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
 	"version": "0.6.0",
@@ -57,7 +57,7 @@
 			},
 			{
 				"command": "amiga-blitzbasic2.buildADF",
-				"title": "BB2: build an bootableadf from executable and assets"
+				"title": "BB2: build an bootable adf from executable and assets"
 			}
 		],
 		"languages": [

@@ -1,6 +1,6 @@
 # Amiga Blitz Basic 2 Language Support - Javascript Native Edition
 
-This extension adds language support for the Amiga version of Blitz Basic 2 (and Amiblitz). The extension is in alpha state so syntax highlighting is still limited.
+This extension adds language support for the Amiga version of Blitz Basic 2 (and Amiblitz). The extension is in alpha state so syntax highlighting is still limited. Big thanks to Youen Chéné who has made a lot of improvements to this extension!
 
 ## TL;DR
 
@@ -17,9 +17,7 @@ Run on real Amiga is deactivated (need the proper serial cable to test it).
 
 ## Note
 
-_This a forked version of this project (https://github.com/MickGyver/vscode-amiga-blitzbasic) in order to target a full native javascript extension with the no external tools as possible (except UAE)._
-
-_It might be merge to the source extension soon : https://marketplace.visualstudio.com/items?itemName=mickgyver.amiga-blitzbasic2_
+This version now includes the native javascript improvements by Youen Chéné: https://github.com/youenchene/vscode-amiga-blitzbasic so no external tools are needed now, except for UAE of course.
 
 ## Compatibility
 
