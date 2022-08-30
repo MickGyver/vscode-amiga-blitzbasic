@@ -2,13 +2,17 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es6",
-		"outDir": "out",
+		"outDir": "./out",
+		"allowJs": true,
+		"checkJs": false,
+		"resolveJsonModule": true,
 		"lib": [
 			"es6"
 		],
 		"sourceMap": true,
 		"rootDir": "src",
-		"strict": true   /* enable all strict type-checking options */
+		"strict": true   /* enable all strict type-checking options */,
+		
 		/* Additional Checks */
 		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
 		// "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
@@ -16,6 +20,7 @@
 	},
 	"exclude": [
 		"node_modules",
-		".vscode-test"
+		".vscode-test",
+		"out"
 	]
 }
