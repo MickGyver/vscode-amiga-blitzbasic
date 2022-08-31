@@ -163,6 +163,13 @@ Run to Amiga is not implemented and tested yet in this version.
 
 Random couldn't open file error on Ted/Blitz2.
 
+
+## To contact the contributors
+
+[@MickGyver](https://twitter.com/MickGyver)
+
+[@youen_chene](https://twitter.com/youen_chene)
+
 ## Release Notes
 
 ## 0.7.0
