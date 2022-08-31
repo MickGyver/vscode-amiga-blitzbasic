@@ -1,14 +1,14 @@
 {
 	"name": "amiga-blitzbasic2",
 	"displayName": "Amiga Blitz Basic 2",
-	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz, with native javascript improvements by youenchene.",
-	"publisher" : "MickGyver",
+	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz",
+	"publisher" : "MickGyver, Youen Chéné",
 	"repository": {
 		"type": "git",
     "url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},

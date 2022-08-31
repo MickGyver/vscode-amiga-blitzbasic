@@ -13,11 +13,13 @@ To open all your current folder blitz basic 2 files (.bba) program on UAE use th
 
 To open all your current folder blitz basic 2 files  AND to run your current blitz basic 2 program on UAE use the shortcut `Ctrl-F8` (Win, Linux) or `Cmd-F8`(Mac).
 
+To package an ADF (let's say you already generate an executable with blitz basic 2) `Ctrl-F4` (Win, Linux) or `Cmd-F4`(Mac).
+
 Run on real Amiga is deactivated (need the proper serial cable to test it).
 
 ## Note
 
-This version now includes the native javascript improvements by Youen Chéné: https://github.com/youenchene/vscode-amiga-blitzbasic so no external tools are needed now, except for UAE of course.
+This version now includes the native javascript improvements by Youen Chéné, so no external tools are needed now, except for UAE of course.
 
 ## Compatibility
 
@@ -33,13 +35,15 @@ All OS support VSCode and UAE(or a real Amiga).
 
 4. Have your UAE and Amiga OS open.
 
-5. When you do the shortcut to run on UAE (command - F5), it will :
+5. When you do the shortcut to run on UAE (`Cmd - F6`or `Ctrl - F6`), it will :
    - write a **copy** of your file with the extension **.bb2** (so TED don't mess up your original .bba file),
    - copy all necessary files for Amiga OS,
    - launch AREXX script to launch TED/Blitz Basic 2 and then **compile and run** automatically your code.
    - sometimes it failed, just retry the shortcut, sometimes you need to reboot your Amiga OS.
 
 6. Enjoy coding in Blitz Basic 2 in a modern way!
+
+7. Once you've generate an executable, you can now add a `packaging.json` file and hit `Cmd - F6`or `Ctrl - F6` to generate an ADF. The ADF is generated and available in the build folder.
 
 ## Features
 
@@ -64,6 +68,48 @@ All OS support VSCode and UAE(or a real Amiga).
 ![Outline](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/outline.jpg)
 
 ![GoToSymbol](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/gotosymbol.jpg)
+
+- Generate ADF from a `packaging.json` file created at the root folder of your project :
+
+```json
+{
+    "supports": [
+        {
+            "type": "adf",
+            "boot": true,
+            "supportName": "Blower",
+            "exeToLaunch": "blower.exe",
+            "includeDiskFontLibrary": true,
+            "includeMathTransLibrary": false,
+            "filesToIncludeOnRoot": [
+                "blower.exe",
+                "blower.exe.info"
+            ],
+            "foldersToInclude": [
+                "assets"
+            ]
+        }
+    ]
+}
+```
+
+Each support entry (multi disk and multi support) support the following parameters (all mandatory) :
+
+`type` : `adf` as the only value for the moment (`cdtv` and `cd32` will be available in a near future).
+
+`boot` : `true` for the booting disk, `false` for the other disk.
+
+`supportName`: name of your adf, floppy, cdrom. It's the name that will be shown by workbench. Choose a different name for each support entry of the config file.
+
+`exeToLaunch`: the exe to launch on startup sequence.
+
+`includeDiskFontLibrary`: for bootable support, `true` if you do disk access in your software.
+
+`includeMathTransLibrary`: for bootable support, `true` if you do advanced mathematical as sinus or cosinus.
+
+`filesToIncludeOnRoot`: list all the files to include on the root folder of the support, typically your executable and .info files.
+
+`filesToIncludeOnRoot`: list all the folders to include on the root folder of the support, typically your assets. It includes automatically all sub-folders.
 
 ## Requirements
 
@@ -119,7 +165,9 @@ Random couldn't open file error on Ted/Blitz2.
 
 ## Release Notes
 
-# 0.6.0
+## 0.7.0
+- ADF Packaging
+## 0.6.0
 - Blitz Basic 2 Label, NewType, Statement, Function and Macro are now showing up in the Outline view and Go to Symbol..
 ## 0.5.0
 - New keybindings
