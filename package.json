@@ -5,10 +5,11 @@
 	"publisher" : "MickGyver",
 	"repository": {
 		"type": "git",
-    "url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
+		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.7.0",
+
+	"version": "0.8.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -39,6 +40,22 @@
 					"type": "number",
 					"default": 1234,
 					"description": "UAE serial direct connection port for AUX: mount."
+				},
+				"AmigaBlitzBasic2.ISOCD": {
+					"type": "string",
+					"description": "Filepath for the ISOCD from the cd32 developerkit."
+				},
+				"AmigaBlitzBasic2.CDTVTM": {
+					"type": "string",
+					"description": "Filepath for the CDTV.TM from the cdtv or cd32 developerkit."
+				},
+				"AmigaBlitzBasic2.CD32TM": {
+					"type": "string",
+					"description": "Filepath for the CD32.TM from the cd32 developerkit."
+				},
+				"AmigaBlitzBasic2.RMTM": {
+					"type": "string",
+					"description": "Filepath for the RMTM from the cdtv or cd32 developerkit."
 				}
 			}
 		},
@@ -58,6 +75,10 @@
 			{
 				"command": "amiga-blitzbasic2.buildADF",
 				"title": "BB2: build an bootable adf from executable and assets"
+			},
+			{
+				"command": "amiga-blitzbasic2.buildISO",
+				"title": "BB2: build an bootable ISO for CDTV and/or CD32 from executable and assets"
 			}
 		],
 		"languages": [
@@ -120,6 +141,12 @@
 				"key": "ctrl+f4",
 				"mac": "cmd+f4",
 				"when": "editorTextFocus"
+			},
+			{
+				"command": "amiga-blitzbasic2.buildISO",
+				"key": "ctrl+f3",
+				"mac": "cmd+f3",
+				"when": "editorTextFocus"
 			}
 		]
 	},
@@ -146,6 +173,7 @@
 	},
 	"dependencies": {
 		"@types/xml2js": "^0.4.11",
+		"natural-compare-lite": "^1.4.0",
 		"xml2js": "^0.4.23"
 	}
 }
