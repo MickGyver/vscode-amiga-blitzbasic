@@ -157,9 +157,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 } else {
                     replaceFile(folder+'/'+mainFile,folder+'/'+mainFile.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
                 }
-                const root = vscode.workspace.workspaceFolders[0];
-                let out = root.uri.fsPath;
-                let dir = out + '/build';
+                let dir = folder + '/build';
                 if (!fs.existsSync(dir)) {
                     fs.mkdirSync(dir, 0o744);
                 }
@@ -199,12 +197,12 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     client.write("\r\n"); // to avoid bug
                     // writing data to server
                     if (run) {
-                        client.write("copy "+sharedFolder+folder+"/"+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                        client.write("copy "+sharedFolder+currentSubfolder+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
                     }
                     else {
-                        client.write("copy "+sharedFolder+folder+"/"+"build/blitzbasic2-open.rexx S:\r\n");
+                        client.write("copy "+sharedFolder+currentSubfolder+"build/blitzbasic2-open.rexx S:\r\n");
                     }
-                    client.write("copy "+sharedFolder+folder+"/"+"build/BB2NagAway C:\r\n"); 
+                    client.write("copy "+sharedFolder+currentSubfolder+"build/BB2NagAway C:\r\n"); 
                     client.write(command);
 
                 });
