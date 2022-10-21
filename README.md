@@ -16,6 +16,8 @@ To package an ADF (let's say you already generate an executable with blitz basic
 
 To package an ISO for CTDV or CD32 (let's say you already generate an executable with blitz basic 2) `Ctrl-F3` (Win, Linux) or `Cmd-F3`(Mac).
 
+To package an ZIP for HD Install (let's say you already generate an executable with blitz basic 2) `Ctrl-F2` (Win, Linux) or `Cmd-F2`(Mac).
+
 Run on real Amiga is deactivated (need the proper serial cable to test it).
 
 ## Note
@@ -282,7 +284,7 @@ Random couldn't open file error on Ted/Blitz2.
 ## Release Notes
 
 ## 0.9.0
-- Zip packaging for HD Installation
+- Zip packaging for HD Installation'
 ## 0.8.0
 - [Experimental] CDTV and CD32 Packaging
 - Fix to avoid cannot Open File in BB2 Editor.
