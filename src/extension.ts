@@ -6,6 +6,7 @@ import * as xml2js from 'xml2js';
 var naturalCompare = require("natural-compare-lite")
 var path = require('path');
 var net = require('net');
+import { zip, COMPRESSION_LEVEL } from 'zip-a-folder';
 import Adf from './adfFS';
 import { stringify } from 'querystring';
 
@@ -101,7 +102,10 @@ export function activate(context: vscode.ExtensionContext) {
     let buildISOCommand = vscode.commands.registerCommand('amiga-blitzbasic2.buildISO', () => {
         buildSupport(context,sharedFolder,"ISO");
 	});
-	context.subscriptions.push(buildISOCommand);
+    let buildZIPCommand = vscode.commands.registerCommand('amiga-blitzbasic2.buildZIP', () => {
+        buildSupport(context,sharedFolder,"ZIP");
+	});
+	context.subscriptions.push(buildZIPCommand);
 
 	context.subscriptions.push(
         vscode.languages.registerDocumentSymbolProvider(
@@ -428,7 +432,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
             }
             if (packagingConfig) {
                 for(const support of packagingConfig.supports) {
-                    if (support.type=="adf" && targetType=='ADF') {
+                    if (support.type.toUpperCase()=="ADF" && targetType=='ADF') {
 
                         const adf=new Adf();
                         //init ADF
@@ -484,6 +488,45 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                                 }
                             }
                         }); 
+                    }
+
+                    if (support.type.toUpperCase()=="ZIP" && targetType=='ZIP') {
+
+                        //prepare files
+
+                        const dirBuildZIP = dirBuild+'/zip';
+                        const dirBuildZIPInside = dirBuildZIP+'/'+support.supportName;
+
+                        if (fs.existsSync(dirBuildZIP)) {
+                            fs.rmdirSync(dirBuildZIP, { recursive: true });
+                        }
+                        fs.mkdirSync(dirBuildZIP, 0o744);
+                        fs.mkdirSync(dirBuildZIPInside, 0o744);
+
+                        if (support.filesToIncludeOnRoot) {
+                            support.filesToIncludeOnRoot.forEach((fileToAdd:string) => {
+                                replaceFile(folder+"/"+fileToAdd,dirBuildZIPInside+"/"+fileToAdd);  
+                            });  
+                        }
+                        if (support.foldersToInclude) {
+                            support.foldersToInclude.forEach((folderToAdd:string) => {
+                                uploadFolderLocal(folder,folderToAdd,dirBuildZIPInside)
+                            });  
+                        }
+
+                        if (support.folderIcon) {
+                            replaceFile(folder+"/"+support.folderIcon,dirBuildZIP+"/"+support.supportName+".info"); 
+                        }
+
+                        if (fs.existsSync(dirBuild+'/'+support.supportName+'.zip')) {
+                            fs.unlinkSync(dirBuild+'/'+support.supportName+'.zip');
+                        }
+
+                        await zip(dirBuildZIP, dirBuild+'/'+support.supportName+'.zip',{compression: COMPRESSION_LEVEL.uncompressed});
+
+
+                        vscode.window.showInformationMessage('ZIP Ready for support : '+support.supportName+' !');
+       
                     }
 
                     if ( targetType=='ISO' && (support.type.toUpperCase()=='CDTV' || support.type.toUpperCase()=='CD32')) { 

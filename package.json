@@ -2,13 +2,13 @@
 	"name": "amiga-blitzbasic2",
 	"displayName": "Amiga Blitz Basic 2",
 	"description": "Language Support for Amiga Blitz Basic 2 and Amiblitz",
-	"publisher" : "MickGyver",
+	"publisher": "MickGyver",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.8.0",
+	"version": "0.9.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -78,6 +78,10 @@
 			{
 				"command": "amiga-blitzbasic2.buildISO",
 				"title": "BB2: build an bootable ISO for CDTV and/or CD32 from executable and assets"
+			},
+			{
+				"command": "amiga-blitzbasic2.buildZIP",
+				"title": "BB2: build an ZIP file of your game for HD install."
 			}
 		],
 		"languages": [
@@ -146,6 +150,12 @@
 				"key": "ctrl+f3",
 				"mac": "cmd+f3",
 				"when": "editorTextFocus"
+			},
+			{
+				"command": "amiga-blitzbasic2.buildZIP",
+				"key": "ctrl+f2",
+				"mac": "cmd+f2",
+				"when": "editorTextFocus"
 			}
 		]
 	},
@@ -173,6 +183,7 @@
 	"dependencies": {
 		"@types/xml2js": "^0.4.11",
 		"natural-compare-lite": "^1.4.0",
-		"xml2js": "^0.4.23"
+		"xml2js": "^0.4.23",
+		"zip-a-folder": "^1.1.5"
 	}
 }

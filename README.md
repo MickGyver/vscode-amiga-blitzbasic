@@ -96,7 +96,7 @@ All OS support VSCode and UAE(or a real Amiga).
 
 Each support entry (multi disk and multi support) support the following parameters (all mandatory) :
 
-`type` : `adf` as the only value for the moment (`cdtv` and `cd32` will be available in a near future).
+`type` : `adf`
 
 `boot` : `true` for the booting disk, `false` for the other disk.
 
@@ -192,6 +192,34 @@ The iso packaging works that way :
 
 [Quick demonstration](https://www.youtube.com/watch?v=0EuKqFit3tg)
 
+### - Generate ZIP file for Hard Disk Installation from a `packaging.json` file created at the root folder of your project using  `Ctrl-F2` (Win, Linux) or `Cmd-F2`(Mac) :
+
+```json
+{
+    "supports": [
+        {
+            "type": "zip",
+            "supportName": "Blower_HD",
+            "folderIcon": "Blower_HD.info",
+            "exeToLaunch": "blower.exe",
+            "filesToIncludeOnRoot": [
+                "blower.exe",
+                "blower.exe.info"
+            ],
+            "foldersToInclude": [
+                "assets"
+            ]
+        }
+    ]
+}
+```
+
+Each support entry (multi disk and multi support) support the following parameters (all mandatory) :
+
+`folderIcon`: icon path (.info) for the containing folder inside the zip file. The folder of your game in your hard disk will appear with this icon.
+
+**At the end of the process, your ZIP is available in the build folder**.
+
 ## Requirements
 
 You only need to configure your UAE and Amiga OS :
@@ -253,9 +281,11 @@ Random couldn't open file error on Ted/Blitz2.
 
 ## Release Notes
 
+## 0.9.0
+- Zip packaging for HD Installation
 ## 0.8.0
 - [Experimental] CDTV and CD32 Packaging
-- Fix to avoid cannot Open File in BBE Editor.
+- Fix to avoid cannot Open File in BB2 Editor.
 ## 0.7.0
 - ADF Packaging
 ## 0.6.0
