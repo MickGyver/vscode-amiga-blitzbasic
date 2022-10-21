@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as xml2js from 'xml2js';
+var naturalCompare = require("natural-compare-lite")
 var path = require('path');
 var net = require('net');
 import Adf from './adfFS';
@@ -93,9 +94,14 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(runalluae);
 
     let buildADFCommand = vscode.commands.registerCommand('amiga-blitzbasic2.buildADF', () => {
-        buildADF(context,settings,sharedFolder);
+        buildSupport(context,sharedFolder,'ADF');
 	});
 	context.subscriptions.push(buildADFCommand);
+
+    let buildISOCommand = vscode.commands.registerCommand('amiga-blitzbasic2.buildISO', () => {
+        buildSupport(context,sharedFolder,"ISO");
+	});
+	context.subscriptions.push(buildISOCommand);
 
 	context.subscriptions.push(
         vscode.languages.registerDocumentSymbolProvider(
@@ -151,9 +157,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 } else {
                     replaceFile(folder+'/'+mainFile,folder+'/'+mainFile.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
                 }
-                const root = vscode.workspace.workspaceFolders[0];
-                let out = root.uri.fsPath;
-                let dir = out + '/build';
+                let dir = folder + '/build';
                 if (!fs.existsSync(dir)) {
                     fs.mkdirSync(dir, 0o744);
                 }
@@ -193,12 +197,12 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     client.write("\r\n"); // to avoid bug
                     // writing data to server
                     if (run) {
-                        client.write("copy "+sharedFolder+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                        client.write("copy "+sharedFolder+currentSubfolder+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
                     }
                     else {
-                        client.write("copy "+sharedFolder+"build/blitzbasic2-open.rexx S:\r\n");
+                        client.write("copy "+sharedFolder+currentSubfolder+"build/blitzbasic2-open.rexx S:\r\n");
                     }
-                    client.write("copy "+sharedFolder+"build/BB2NagAway C:\r\n"); 
+                    client.write("copy "+sharedFolder+currentSubfolder+"build/BB2NagAway C:\r\n"); 
                     client.write(command);
 
                 });
@@ -210,7 +214,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 });
                 
                 setTimeout(function(){
-                console.log(out);
+                console.log(outData);
                 client.end('Bye bye server');
                 },1000);
 
@@ -241,13 +245,9 @@ function getCurrentFile() : string {
 
 function replaceFile(srcFile:string,destFile:string) {
     if (fs.existsSync(destFile)) {
-        fs.unlink(destFile, function (err) { if (err) {
-            console.log(err);
-        } }); // delete if needed
+        fs.unlinkSync(destFile); // delete if needed
     }
-    fs.copyFile(srcFile, destFile, fs.constants.COPYFILE_EXCL, (err) => { if (err) {
-        console.log(err);
-    } });
+    fs.copyFileSync(srcFile, destFile, fs.constants.COPYFILE_EXCL);
 }
 
 class ABB2DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
@@ -404,15 +404,15 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
     }
 }
 
-function buildADF(context: vscode.ExtensionContext,settings:vscode.WorkspaceConfiguration,sharedFolder:string) {
+async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targetType:string) {
+    const settings = vscode.workspace.getConfiguration('AmigaBlitzBasic2')
+                       
     let file = getCurrentFile();
     if(file.length > 0)
     {
         if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
 
-            vscode.window.showInformationMessage('Building ADF...');
-
-            
+            vscode.window.showInformationMessage('Building '+targetType+'...');
 
             const folder=path.dirname(vscode.window.activeTextEditor.document.fileName)
             const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName)
@@ -426,21 +426,9 @@ function buildADF(context: vscode.ExtensionContext,settings:vscode.WorkspaceConf
             if (fs.existsSync(folder+"/packaging.json")) {
                 packagingConfig = JSON.parse(fs.readFileSync(folder+"/packaging.json", 'utf-8'))
             }
-
-            /*
-            const adf2=new Adf();
-         const adfSrc2=dir + '/blower.adf'
-            var myArrayBuffer2=fs.readFileSync(adfSrc2).buffer
-            adf2.loadDisk(myArrayBuffer2, function(success:any){
-                if (success){
-                    var info = adf2.getInfo();
-                }
-            });
-            */
-            
             if (packagingConfig) {
-                packagingConfig.supports.forEach((support:any) => {
-                    if (support.type=="adf") {
+                for(const support of packagingConfig.supports) {
+                    if (support.type=="adf" && targetType=='ADF') {
 
                         const adf=new Adf();
                         //init ADF
@@ -487,9 +475,7 @@ function buildADF(context: vscode.ExtensionContext,settings:vscode.WorkspaceConf
                                     const outDisk=adf.getDisk()
                                     // delete target if needed
                                     if (fs.existsSync(adfPath)) {
-                                        fs.unlink(adfPath, function (err) { if (err) {
-                                            console.log(err);
-                                        } });
+                                        fs.unlinkSync(adfPath);
                                     }
                                     var writeStream = fs.createWriteStream(adfPath);
                                     writeStream.write(toBuffer(outDisk.buffer))
@@ -499,10 +485,181 @@ function buildADF(context: vscode.ExtensionContext,settings:vscode.WorkspaceConf
                             }
                         }); 
                     }
-                });
+
+                    if ( targetType=='ISO' && (support.type.toUpperCase()=='CDTV' || support.type.toUpperCase()=='CD32')) { 
+
+                        if (settings.ISOCD.length > 0) {
+                            replaceFile(settings.ISOCD,dirBuild+'/isocd'); 
+                        }
+
+                        //prepare files
+            
+                        const dirBuildISO = dirBuild+'/iso-build-'+support.type.toUpperCase();
+
+                        if (fs.existsSync(dirBuildISO)) {
+                            fs.rmdirSync(dirBuildISO, { recursive: true });
+                        }
+                        fs.mkdirSync(dirBuildISO, 0o744);
+
+                        if (support.filesToIncludeOnRoot) {
+                            support.filesToIncludeOnRoot.forEach((fileToAdd:string) => {
+                                replaceFile(folder+"/"+fileToAdd,dirBuildISO+"/"+fileToAdd);  
+                            });  
+                        }
+                        if (support.foldersToInclude) {
+                            support.foldersToInclude.forEach((folderToAdd:string) => {
+                                uploadFolderLocal(folder,folderToAdd,dirBuildISO)
+                            });  
+                        }
+
+                        fs.mkdirSync(dirBuildISO+"/S", 0o744);
+                        let startupSequence=fs.readFileSync(context.extensionPath+'/resources/packaging/startup-sequence-iso','utf-8');
+                        startupSequence=startupSequence.replace('%exe%',support.exeToLaunch);
+                        fs.writeFileSync(dirBuildISO+'/S/startup-sequence',new Uint8Array(Buffer.from(startupSequence)),'utf-8');
+
+                        fs.mkdirSync(dirBuildISO+"/Libs", 0o744);
+                        if (support.includeDiskFontLibrary) {
+                            replaceFile(context.extensionPath+'/resources/packaging/diskfont.library',dirBuildISO+'/Libs/diskfont.library'); 
+                        }
+                        if (support.includeMathTransLibrary) {
+                            replaceFile(context.extensionPath+'/resources/packaging/mathtrans.library',dirBuildISO+'/Libs/mathtrans.library'); 
+                        }
+
+                        fs.mkdirSync(dirBuildISO+"/C", 0o744);
+                        if (settings.RMTM.length > 0) {
+                            replaceFile(settings.RMTM,dirBuildISO+'/C/rmtm'); 
+                        }
+
+                        if (settings.CDTVTM.length > 0 && support.type.toUpperCase()=='CDTV') {
+                            replaceFile(settings.CDTVTM,dirBuildISO+'/CDTV.TM'); 
+                        }
+
+                        if (settings.CD32TM.length > 0 && support.type.toUpperCase()=='CD32') {
+                            replaceFile(settings.CD32TM,dirBuildISO+'/CD32.TM');     
+                        }
+
+
+                        // Prepare Layout
+                        const isoPath=sharedFolder+currentSubfolder+"build/"+support.supportName+".iso"
+
+                        replaceFile(context.extensionPath+'/resources/packaging/Layout',dirBuild+'/Layout'+support.type.toUpperCase());
+                        let layout=fs.readFileSync(dirBuild+'/Layout'+support.type.toUpperCase(),'utf-8');
+                        layout+='\n';
+                        layout+=support.supportName+'\n';
+                        if (support.supportVolumeSet) {
+                            layout+=support.supportVolumeSet+'\n';
+                        } else {
+                            layout+='\n';
+                        }
+                        if (support.supportPublisher) {
+                            layout+=support.supportPublisher+'\n';
+                        } else {
+                            layout+='\n';
+                        }
+                        if (support.supportPreparer) {
+                            layout+=support.supportPreparer+'\n';
+                        } else {
+                            layout+='\n';
+                        }
+                        if (support.supportApplication) {
+                            layout+=support.supportApplication+'\n';
+                        } else {
+                            layout+='\n';
+                        }
+                        layout+='\n';
+                        layout+=isoPath+"\n";
+                        // End of Header
+                        let isoDesc={
+                            folders: new Map<string, [string]>(),
+                            elems: new Array<LayoutElem>(),
+                            count: 1
+                        };
+                        
+                        listFolderForISO(dirBuildISO,isoDesc,1,{countFolder: 1},1)
+                        
+                        // folder list
+                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder+'build/iso-build-'+support.type.toUpperCase()+'\n'
+                        layout+=' 0001	<Root Dir>\n'
+                        isoDesc.folders.forEach( (value,key) => { 
+                            value.forEach(name => {
+                                layout+=' '+key.padStart(4,'0')+'	'+name+'\n'
+                            })
+                        });
+
+                        layout+='\n';
+
+                        layout+='H0000	<ISO Header>\n';
+                        layout+='P0000	<Path Table>\n';
+                        layout+='P0000	<Path Table>\n';
+                        layout+='C0000	<Trademark>\n';
+                        layout+='D0001	<Root Dir>\n';
+
+                        isoDesc.elems.forEach( (elem) => { 
+                            if (elem.type=='file') {
+                                layout+='F'+elem.folderRef.padStart(4,'0')+'	'+elem.name+'\n'
+                            }
+                            if (elem.type=='folder') {
+                                layout+='D'+elem.folderRef.padStart(4,'0')+'	'+elem.name+'\n'
+                            }
+                        });
+
+                        layout+='E0000	65536\n';
+
+                        fs.writeFileSync(dirBuild+'/Layout'+support.type.toUpperCase(),new Uint8Array(Buffer.from(layout)),'utf-8');
+
+                        if (fs.existsSync(dirBuild+"/"+support.supportName+".iso")) {
+                            fs.unlinkSync(dirBuild+"/"+support.supportName+".iso");
+                        }
+
+                        var client  = new net.Socket();
+
+
+                        client.setEncoding('utf8');
+                        
+                        client.on('data',function(data:any){
+                            console.log(data);
+                        });
+
+                        client.on('connect',function(){
+                            console.log('Client: connection established with server');
+                            client.write("\r\n"); // to avoid bug
+                            // writing data to server
+                            client.write("copy "+sharedFolder+currentSubfolder+"build/isocd RAM:\r\n"); 
+                            client.write("copy "+sharedFolder+currentSubfolder+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
+                            client.write("copy "+sharedFolder+currentSubfolder+"build/Layout"+support.type.toUpperCase()+" RAM:\r\n");
+                            client.write("RAM:\r\n");
+                            const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r\n"
+                            console.log(command);
+                            client.write(command); 
+                        });
+                        
+     
+                        client.connect({
+                            port: settings.UAEPort
+                        });
+
+                        setTimeout(function(){
+                            client.end('Bye bye server');
+                        },1000);
+        
+
+                        if (support.type.toUpperCase() == 'CDTV') {
+                            vscode.window.showInformationMessage('ISO for CDTV and CD32 ready for support : '+support.supportName+' !');
+                        } else {
+                            vscode.window.showInformationMessage('ISO for CD32 only ready for support : '+support.supportName+' !');
+                        }
+                        vscode.window.showInformationMessage('Wait 20 seconds...');
+                        await delay(20000);
+                    }
+                }
             }
         }
     }
+}
+
+
+function delay(milliseconds : number) {
+    return new Promise(resolve => setTimeout( resolve, milliseconds));
 }
 
 function uploadFolder(folderPath:string,folderName:string,sector:any,adfDisk:any){
@@ -537,4 +694,79 @@ function toBuffer(ab:ArrayBuffer) {
         buf[i] = view[i];
     }
     return buf;
+}
+
+function uploadFolderLocal(folderPath:string,folderName:string,targetFolder:string){
+    fs.mkdirSync(targetFolder+'/'+folderName);
+    let files=fs.readdirSync(folderPath+"/"+folderName);
+    files.forEach(fileToAdd => {
+        const srcFile=folderPath+"/"+folderName+"/"+fileToAdd;
+        const isDir = fs.existsSync(srcFile) && fs.lstatSync(srcFile).isDirectory();
+        if (isDir) {
+            uploadFolderLocal(folderPath+"/"+folderName,fileToAdd,targetFolder+'/'+folderName);
+        } else {
+            if (fileToAdd != ".DS_Store") {
+                replaceFile(folderPath+"/"+folderName+"/"+fileToAdd,targetFolder+'/'+folderName+'/'+fileToAdd);  
+            }
+        }
+    });
+}
+
+function listFolderForISO(dest:string, isoDesc:  { folders: Map<string, [string]>, elems:Array<LayoutElem>, count:number },level:number,counter: { countFolder:number}, posFolder:number ){
+    let files=fs.readdirSync(dest);
+    files.sort((a,b) => { return naturalCompare(a.toLowerCase(), b.toLowerCase());});
+    let actions=new Array<Action>();
+    files.forEach(fileToAdd => {
+        const srcFile=dest+"/"+fileToAdd;
+        const isDir = fs.existsSync(srcFile) && fs.lstatSync(srcFile).isDirectory();
+        if (isDir) {
+            let sLevel=level.toString();
+            if (!isoDesc.folders.has(sLevel)) {
+                isoDesc.folders.set(sLevel,[fileToAdd]);
+            } else {
+                isoDesc.folders.get(sLevel)?.push(fileToAdd);
+            }
+            isoDesc.count=isoDesc.count+1;
+            //
+            counter.countFolder=counter.countFolder+1;
+            
+            let folder:LayoutElem = {
+                type: 'folder',
+                name: fileToAdd,
+                folderRef: counter.countFolder.toString()
+            };
+            isoDesc.elems.push(folder);
+
+            actions.push({
+                srcFile:srcFile,isoDesc:isoDesc,level:level+1,counter:counter,posFolder:counter.countFolder
+            })
+            
+        } else {
+            let file:LayoutElem = {
+                type: 'file',
+                name: fileToAdd,
+                folderRef: posFolder.toString()
+            };
+            isoDesc.elems.push(file);
+        }
+    });
+    actions.forEach(a => {
+        listFolderForISO(a.srcFile,a.isoDesc,a.level,a.counter,a.posFolder);
+    });
+    
+    return isoDesc;
+}
+
+interface LayoutElem {
+    type: string,
+    name: string;
+    folderRef: string;
+}
+
+interface Action {
+    srcFile:string;
+    isoDesc: { folders: Map<string, [string]>, elems:Array<LayoutElem>, count:number };
+    level:number;
+    counter: { countFolder:number};
+    posFolder: number;
 }

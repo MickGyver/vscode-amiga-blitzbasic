@@ -6,7 +6,6 @@ This extension adds language support for the Amiga version of Blitz Basic 2 (and
 
 **!! NEW KEY BINDING !!**
 
-
 To open and run your current blitz basic 2 program on UAE use the shortcut `Ctrl-F6` (Win, Linux) or `Cmd-F6`(Mac).
 
 To open all your current folder blitz basic 2 files (.bba) program on UAE use the shortcut `Ctrl-F7` (Win, Linux) or `Cmd-F7`(Mac).
@@ -14,6 +13,8 @@ To open all your current folder blitz basic 2 files (.bba) program on UAE use th
 To open all your current folder blitz basic 2 files  AND to run your current blitz basic 2 program on UAE use the shortcut `Ctrl-F8` (Win, Linux) or `Cmd-F8`(Mac).
 
 To package an ADF (let's say you already generate an executable with blitz basic 2) `Ctrl-F4` (Win, Linux) or `Cmd-F4`(Mac).
+
+To package an ISO for CTDV or CD32 (let's say you already generate an executable with blitz basic 2) `Ctrl-F3` (Win, Linux) or `Cmd-F3`(Mac).
 
 Run on real Amiga is deactivated (need the proper serial cable to test it).
 
@@ -43,33 +44,33 @@ All OS support VSCode and UAE(or a real Amiga).
 
 6. Enjoy coding in Blitz Basic 2 in a modern way!
 
-7. Once you've generate an executable, you can now add a `packaging.json` file and hit `Cmd - F6`or `Ctrl - F6` to generate an ADF. The ADF is generated and available in the build folder.
+7. Once you've generate an executable, you can now add a `packaging.json` file and hit `Cmd - F3`or `Ctrl - F3` to generate an ADF. The ADF is generated and available in the build folder.
 
 ## Features
 
-- Syntax highlighting.
-- Snippets for most Blitz Basic 2 functions and methods.
-- Outline shows macros, labels, functions and statements.
-- Integrated help.
+### - Syntax highlighting.
+### - Snippets for most Blitz Basic 2 functions and methods.
+### - Outline shows macros, labels, functions and statements.
+### - Integrated help.
 
 ![contextual help](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/help.jpg)
 
-- Commands for running the app/game in WinUAE or FSUAE. (ony requires blitzbasic2.rexx and amiga os config in command line tools, see below).
+### - Commands for running the app/game in WinUAE or FSUAE. (ony requires blitzbasic2.rexx and amiga os config in command line tools, see below).
 
 ![compil and run into UAE](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/compil.jpg)
 
-- Commands for running the app/game on a real Amiga (requires command line tools, see below).
-- Settings to tune the integration to your UAE :
+### - Commands for running the app/game on a real Amiga (requires command line tools, see below).
+### - Settings to tune the integration to your UAE :
 
 ![Extension Settings](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/settings.jpg)
 
-- Outline View and `Go to Symbol` (Cmd/Ctrl + Shift + O) integration.
+### - Outline View and `Go to Symbol` (Cmd/Ctrl + Shift + O) integration.
 
 ![Outline](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/outline.jpg)
 
 ![GoToSymbol](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/gotosymbol.jpg)
 
-- Generate ADF from a `packaging.json` file created at the root folder of your project :
+### - Generate ADF from a `packaging.json` file created at the root folder of your project using  `Ctrl-F4` (Win, Linux) or `Cmd-F4`(Mac) :
 
 ```json
 {
@@ -110,6 +111,86 @@ Each support entry (multi disk and multi support) support the following paramete
 `filesToIncludeOnRoot`: list all the files to include on the root folder of the support, typically your executable and .info files.
 
 `filesToIncludeOnRoot`: list all the folders to include on the root folder of the support, typically your assets. It includes automatically all sub-folders.
+
+
+**At the end of the process, your ADF is available in the build folder**.
+
+### - [Experimental] Generate ISO for CDTV and CD32 from a `packaging.json` file created at the root folder of your project using  `Ctrl-F3` (Win, Linux) or `Cmd-F3`(Mac) :
+
+Before you start you need extra package that are under copyright from the CDTV and CD32 Commodore Developer Kit (dig into google and eababime.net forums) :
+
+- CDTV.TM file (from CDTV and CD32 dev kit),
+- CD32.TM file (from CD32 dev kit),
+- RMTM executable file (from CDTV dev kit),
+- isocd executable file (from CD32 dev kit).
+
+Then you need to paste the path of these files into the extension settings :
+
+![Extension Settings for ISO packaging](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/iso-settings.jpg)
+
+```json
+{
+    "supports": [
+        {
+            "type": "cdtv",
+            "boot": true,
+            "supportName": "Blower",
+            "supportVolumeSet": "",
+            "supportPublisher": "Micrix Production",
+            "supportPreparer": "",
+            "supportApplication": "",
+            "exeToLaunch": "blower.exe",
+            "includeDiskFontLibrary": true,
+            "includeMathTransLibrary": false,
+            "filesToIncludeOnRoot": [
+                "blower.exe",
+                "blower.exe.info"
+            ],
+            "foldersToInclude": [
+                "assets"
+            ]
+        },
+        {
+            "type": "cd32",
+            "boot": true,
+            "supportName": "Blower_CD32",
+            "supportVolumeSet": "",
+            "supportPublisher": "Micrix Production",
+            "supportPreparer": "",
+            "supportApplication": "",
+            "exeToLaunch": "blower.exe",
+            "includeDiskFontLibrary": true,
+            "includeMathTransLibrary": false,
+            "filesToIncludeOnRoot": [
+                "blower.exe",
+                "blower.exe.info"
+            ],
+            "foldersToInclude": [
+                "assets"
+            ]
+        }
+    ]
+}
+```
+
+`supportVolumeSet`: (optional) Identifier of the volume set of which this volume is a member.
+
+`supportPublisher`: (optional) The volume publisher
+
+`supportPreparer`: (optional) The identifier of the person(s) who prepared the data for this volume. 
+
+`supportApplication`: (optional) Identifies how the data are recorded on this volume. 
+
+More information on https://wiki.osdev.org/ISO_9660
+
+The iso packaging works that way :
+
+- it prepares a folder for the iso,
+- it generates and copy the ISO Layout for isocd,
+- it launch isocd command line  in UAE and then close isocd.
+- your iso is available in the build folder.
+
+[Quick demonstration](https://www.youtube.com/watch?v=0EuKqFit3tg)
 
 ## Requirements
 
@@ -172,6 +253,9 @@ Random couldn't open file error on Ted/Blitz2.
 
 ## Release Notes
 
+## 0.8.0
+- [Experimental] CDTV and CD32 Packaging
+- Fix to avoid cannot Open File in BBE Editor.
 ## 0.7.0
 - ADF Packaging
 ## 0.6.0
