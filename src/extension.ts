@@ -404,7 +404,7 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
     }
 }
 
-function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targetType:string) {
+async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targetType:string) {
     const settings = vscode.workspace.getConfiguration('AmigaBlitzBasic2')
                        
     let file = getCurrentFile();
@@ -427,7 +427,7 @@ function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targe
                 packagingConfig = JSON.parse(fs.readFileSync(folder+"/packaging.json", 'utf-8'))
             }
             if (packagingConfig) {
-                packagingConfig.supports.forEach((support:any) => {
+                for(const support of packagingConfig.supports) {
                     if (support.type=="adf" && targetType=='ADF') {
 
                         const adf=new Adf();
@@ -486,7 +486,7 @@ function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targe
                         }); 
                     }
 
-                    if ( targetType=='ISO' && (support.type=="cdtv" || support.type=='cd32')) { 
+                    if ( targetType=='ISO' && (support.type.toUpperCase()=='CDTV' || support.type.toUpperCase()=='CD32')) { 
 
                         if (settings.ISOCD.length > 0) {
                             replaceFile(settings.ISOCD,dirBuild+'/isocd'); 
@@ -494,7 +494,7 @@ function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targe
 
                         //prepare files
             
-                        const dirBuildISO = dirBuild+'/iso-build';
+                        const dirBuildISO = dirBuild+'/iso-build-'+support.type.toUpperCase();
 
                         if (fs.existsSync(dirBuildISO)) {
                             fs.rmdirSync(dirBuildISO, { recursive: true });
@@ -530,11 +530,11 @@ function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targe
                             replaceFile(settings.RMTM,dirBuildISO+'/C/rmtm'); 
                         }
 
-                        if (settings.CDTVTM.length > 0 && support.type=='cdtv') {
+                        if (settings.CDTVTM.length > 0 && support.type.toUpperCase()=='CDTV') {
                             replaceFile(settings.CDTVTM,dirBuildISO+'/CDTV.TM'); 
                         }
 
-                        if (settings.CD32TM.length > 0 && support.type=='cd32') {
+                        if (settings.CD32TM.length > 0 && support.type.toUpperCase()=='CD32') {
                             replaceFile(settings.CD32TM,dirBuildISO+'/CD32.TM');     
                         }
 
@@ -542,8 +542,8 @@ function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targe
                         // Prepare Layout
                         const isoPath=sharedFolder+currentSubfolder+"build/"+support.supportName+".iso"
 
-                        replaceFile(context.extensionPath+'/resources/packaging/Layout',dirBuild+'/Layout');
-                        let layout=fs.readFileSync(dirBuild+'/Layout','utf-8');
+                        replaceFile(context.extensionPath+'/resources/packaging/Layout',dirBuild+'/Layout'+support.type.toUpperCase());
+                        let layout=fs.readFileSync(dirBuild+'/Layout'+support.type.toUpperCase(),'utf-8');
                         layout+='\n';
                         layout+=support.supportName+'\n';
                         if (support.supportVolumeSet) {
@@ -578,7 +578,7 @@ function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targe
                         listFolderForISO(dirBuildISO,isoDesc,1,{countFolder: 1},1)
                         
                         // folder list
-                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder+'build/iso-build\n'
+                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder+'build/iso-build-'+support.type.toUpperCase()+'\n'
                         layout+=' 0001	<Root Dir>\n'
                         isoDesc.folders.forEach( (value,key) => { 
                             value.forEach(name => {
@@ -605,53 +605,61 @@ function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targe
 
                         layout+='E0000	65536\n';
 
-                        fs.writeFileSync(dirBuild+'/Layout',new Uint8Array(Buffer.from(layout)),'utf-8');
+                        fs.writeFileSync(dirBuild+'/Layout'+support.type.toUpperCase(),new Uint8Array(Buffer.from(layout)),'utf-8');
 
                         if (fs.existsSync(dirBuild+"/"+support.supportName+".iso")) {
                             fs.unlinkSync(dirBuild+"/"+support.supportName+".iso");
                         }
 
                         var client  = new net.Socket();
-                        client.connect({
-                            port: settings.UAEPort
-                        });
+
+
+                        client.setEncoding('utf8');
                         
-                        let outData:string;
+                        client.on('data',function(data:any){
+                            console.log(data);
+                        });
+
                         client.on('connect',function(){
                             console.log('Client: connection established with server');
                             client.write("\r\n"); // to avoid bug
                             // writing data to server
                             client.write("copy "+sharedFolder+currentSubfolder+"build/isocd RAM:\r\n"); 
-                            client.write("copy "+sharedFolder+currentSubfolder+"build/iso-build/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
-                            client.write("copy "+sharedFolder+currentSubfolder+"build/Layout RAM:\r\n");
+                            client.write("copy "+sharedFolder+currentSubfolder+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
+                            client.write("copy "+sharedFolder+currentSubfolder+"build/Layout"+support.type.toUpperCase()+" RAM:\r\n");
                             client.write("RAM:\r\n");
-                            const command="isocd -lLayout -c"+support.type.toUpperCase()+".TM -b \r\n"
+                            const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r\n"
                             console.log(command);
                             client.write(command); 
                         });
                         
-                        client.setEncoding('utf8');
-                        
-                        client.on('data',function(data:any){
-                            outData+=outData
+     
+                        client.connect({
+                            port: settings.UAEPort
                         });
-                        
+
                         setTimeout(function(){
-                        console.log(outData);
-                        client.end('Bye bye server');
+                            client.end('Bye bye server');
                         },1000);
         
 
-                        if (support.type == 'cdtv') {
+                        if (support.type.toUpperCase() == 'CDTV') {
                             vscode.window.showInformationMessage('ISO for CDTV and CD32 ready for support : '+support.supportName+' !');
                         } else {
                             vscode.window.showInformationMessage('ISO for CD32 only ready for support : '+support.supportName+' !');
                         }
+                        vscode.window.showInformationMessage('Wait 20 seconds...');
+                        await delay(20000);
                     }
-                });
+                }
             }
         }
     }
+}
+
+
+function delay(milliseconds : number) {
+    return new Promise(resolve => setTimeout( resolve, milliseconds));
 }
 
 function uploadFolder(folderPath:string,folderName:string,sector:any,adfDisk:any){
