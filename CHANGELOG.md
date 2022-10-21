@@ -2,6 +2,10 @@
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
 
+
+## [0.8.0 ] - 2022-10-21
+- [Experimental] CDTV and CD32 Packaging
+- Fix to avoid cannot Open File in BBE Editor.
 ## [0.7.0 ] - 2022-08-31
 - ADF Packaging
 ## [0.6.0 ] - 2022-08-21
