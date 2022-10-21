@@ -53,22 +53,22 @@ All OS support VSCode and UAE(or a real Amiga).
 ### - Outline shows macros, labels, functions and statements.
 ### - Integrated help.
 
-![contextual help](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/help.jpg)
+![contextual help](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/help.jpg)
 
 ### - Commands for running the app/game in WinUAE or FSUAE. (ony requires blitzbasic2.rexx and amiga os config in command line tools, see below).
 
-![compil and run into UAE](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/compil.jpg)
+![compil and run into UAE](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/compil.jpg)
 
 ### - Commands for running the app/game on a real Amiga (requires command line tools, see below).
 ### - Settings to tune the integration to your UAE :
 
-![Extension Settings](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/settings.jpg)
+![Extension Settings](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/settings.jpg)
 
 ### - Outline View and `Go to Symbol` (Cmd/Ctrl + Shift + O) integration.
 
-![Outline](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/outline.jpg)
+![Outline](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/outline.jpg)
 
-![GoToSymbol](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/gotosymbol.jpg)
+![GoToSymbol](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/gotosymbol.jpg)
 
 ### - Generate ADF from a `packaging.json` file created at the root folder of your project using  `Ctrl-F4` (Win, Linux) or `Cmd-F4`(Mac) :
 
@@ -126,7 +126,7 @@ Before you start you need extra package that are under copyright from the CDTV a
 
 Then you need to paste the path of these files into the extension settings :
 
-![Extension Settings for ISO packaging](https://raw.githubusercontent.com/youenchene/vscode-amiga-blitzbasic/main/resources/images/iso-settings.jpg)
+![Extension Settings for ISO packaging](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/iso-settings.jpg)
 
 ```json
 {
