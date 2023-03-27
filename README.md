@@ -228,41 +228,41 @@ You only need to configure your UAE and Amiga OS :
 
 1. Ensure that AREXX is started with WorkBench. The line:
 
-```
+    ```
     SYS:System/RexxMast >NIL:
-```
+    ```
 
-should exist in either S/startup-sequence or S/user-startup. If not, add it to the end of
-user-startup.
+    should exist in either S/startup-sequence or S/user-startup. If not, add it to the end of
+    user-startup.
    
 2. In WinUae set serial port to TCP://0.0.0.0:1234 and select "Direct" below the drop down box (Settings
-   / Host / IO ports). Save the WinUAE configuration and quit WinUAE, add the following to the
-   configuration file manually (under the other lines concerning serial): serial_translate=crlf_cr
+    / Host / IO ports). Save the WinUAE configuration and quit WinUAE, add the following to the
+    configuration file manually (under the other lines concerning serial): serial_translate=crlf_cr
    
-   (NOTE: You need to ensure that your firewall/antivirus allows network traffic for WinUAE.)
+    (NOTE: You need to ensure that your firewall/antivirus allows network traffic for WinUAE.)
    
 3. Create the file DEVS:MountList on the virtual harddrive with the following content (if it does not
-   already exist)
+    already exist)
 
-```   
-   AUX:
-   Handler = L:Aux-Handler
-   Stacksize = 1000
-   Priority = 5
-```
+    ```   
+    AUX:
+    Handler = L:Aux-Handler
+    Stacksize = 1000
+    Priority = 5
+    ```
 
 4. Add the following commands to the end of S:user-startup
 
-```    
-   mount aux:
-   newshell aux:
-```  
+    ```    
+    mount aux:
+    newshell aux:
+    ```  
 
 5. Add virtual hard disk pointing to the folders containing your code
  
-This is the same folder that you added to your Visual Studio Code workspace.
+    This is the same folder that you added to your Visual Studio Code workspace.
 
-By default, the folder is named **SharedCode** so the virtual  harddrive can be called as `SharedCode:` in Amiga OS.
+    By default, the folder is named **SharedCode** so the virtual  harddrive can be called as `SharedCode:` in Amiga OS.
 
 6. Of Course Amiga OS (3.x) with Blitz Basic 2 installed.
 
