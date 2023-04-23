@@ -152,8 +152,18 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     var files = fs.readdirSync(folder);
                     files.forEach((f) => {
                         if (path.extname(f)=='.bba') {
-                        replaceFile(folder+'/'+f,folder+'/'+f.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
-                        if (f!= mainFile) {
+                        let target=folder+'/'+f.replace('.bba','.bb2')
+                        replaceFile(folder+'/'+f,target); //.bba file on vscode side, .bb2 for Ted on the amiga.
+                        //Clean end of line to LF (CR/LF trigger error in BB2 compilation)
+                        if (fs.existsSync(target)) {
+                            let inContent=fs.readFileSync(target,'utf8')
+                            const outContent=inContent.replace(/\r\n/g, "\n")
+                            fs.writeFileSync(target, outContent);
+                        } else {
+                            console.log("Can't find file "+target+", skip crlf to lf.")
+                        }
+                       
+                        if (f !== mainFile) {
                             includes.push(sharedFolder+currentSubfolder+f.replace('.bba','.bb2'))
                         }
                         }
