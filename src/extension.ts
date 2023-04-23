@@ -182,9 +182,9 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 else {
                     command="rx S:blitzbasic2-open.rexx ";
                 }
-                command+=" \""+sharedFolder+file.replace('.bba','.bb2')+"\"";
+                command+=" \""+sharedFolder+file.replace('.bba','.bb2').replace('\\','/')+"\"";
                 includes.forEach((include) => {
-                    command+=" \""+include+"\"";
+                    command+=" \""+include.replace('\\','/')+"\"";
                 });
                 command+="\r\n";
 
@@ -201,12 +201,12 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     client.write("\r\n"); // to avoid bug
                     // writing data to server
                     if (run) {
-                        client.write("copy "+sharedFolder+currentSubfolder+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                        client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
                     }
                     else {
-                        client.write("copy "+sharedFolder+currentSubfolder+"build/blitzbasic2-open.rexx S:\r\n");
+                        client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/blitzbasic2-open.rexx S:\r\n");
                     }
-                    client.write("copy "+sharedFolder+currentSubfolder+"build/BB2NagAway C:\r\n"); 
+                    client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/BB2NagAway C:\r\n"); 
                     client.write(command);
 
                 });
