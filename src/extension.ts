@@ -620,7 +620,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                             layout+='\n';
                         }
                         layout+='\n';
-                        layout+=isoPath+"\n";
+                        layout+=isoPath.replace('\\','/')+"\n";
                         // End of Header
                         let isoDesc={
                             folders: new Map<string, [string]>(),
