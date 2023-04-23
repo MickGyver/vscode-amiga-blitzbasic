@@ -2,6 +2,8 @@
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
 
+## [0.9.1 ] - 2023-04-23
+- Fixes for windows compatibility
 ## [0.9.0 ] - 2022-10-21
 - Zip packaging for HD Installation
 ## [0.8.0 ] - 2022-10-21

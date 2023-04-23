@@ -282,7 +282,8 @@ Random couldn't open file error on Ted/Blitz2.
 [@youen_chene](https://twitter.com/youen_chene)
 
 ## Release Notes
-
+## 0.9.1
+- Fixes for windows compatibility
 ## 0.9.0
 - Zip packaging for HD Installation'
 ## 0.8.0
