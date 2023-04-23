@@ -152,8 +152,18 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     var files = fs.readdirSync(folder);
                     files.forEach((f) => {
                         if (path.extname(f)=='.bba') {
-                        replaceFile(folder+'/'+f,folder+'/'+f.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
-                        if (f!= mainFile) {
+                        let target=folder+'/'+f.replace('.bba','.bb2')
+                        replaceFile(folder+'/'+f,target); //.bba file on vscode side, .bb2 for Ted on the amiga.
+                        //Clean end of line to LF (CR/LF trigger error in BB2 compilation)
+                        if (fs.existsSync(target)) {
+                            let inContent=fs.readFileSync(target,'utf8')
+                            const outContent=inContent.replace(/\r\n/g, "\n")
+                            fs.writeFileSync(target, outContent);
+                        } else {
+                            console.log("Can't find file "+target+", skip crlf to lf.")
+                        }
+                       
+                        if (f !== mainFile) {
                             includes.push(sharedFolder+currentSubfolder+f.replace('.bba','.bb2'))
                         }
                         }
@@ -182,9 +192,9 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 else {
                     command="rx S:blitzbasic2-open.rexx ";
                 }
-                command+=" \""+sharedFolder+file.replace('.bba','.bb2')+"\"";
+                command+=" \""+sharedFolder+file.replace('.bba','.bb2').replace('\\','/')+"\"";
                 includes.forEach((include) => {
-                    command+=" \""+include+"\"";
+                    command+=" \""+include.replace('\\','/')+"\"";
                 });
                 command+="\r\n";
 
@@ -201,12 +211,12 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     client.write("\r\n"); // to avoid bug
                     // writing data to server
                     if (run) {
-                        client.write("copy "+sharedFolder+currentSubfolder+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                        client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
                     }
                     else {
-                        client.write("copy "+sharedFolder+currentSubfolder+"build/blitzbasic2-open.rexx S:\r\n");
+                        client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/blitzbasic2-open.rexx S:\r\n");
                     }
-                    client.write("copy "+sharedFolder+currentSubfolder+"build/BB2NagAway C:\r\n"); 
+                    client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/BB2NagAway C:\r\n"); 
                     client.write(command);
 
                 });
@@ -610,7 +620,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                             layout+='\n';
                         }
                         layout+='\n';
-                        layout+=isoPath+"\n";
+                        layout+=isoPath.replace('\\','/')+"\n";
                         // End of Header
                         let isoDesc={
                             folders: new Map<string, [string]>(),
@@ -621,7 +631,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                         listFolderForISO(dirBuildISO,isoDesc,1,{countFolder: 1},1)
                         
                         // folder list
-                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder+'build/iso-build-'+support.type.toUpperCase()+'\n'
+                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder.replace('\\','/')+'build/iso-build-'+support.type.toUpperCase()+'\n'
                         layout+=' 0001	<Root Dir>\n'
                         isoDesc.folders.forEach( (value,key) => { 
                             value.forEach(name => {
@@ -667,9 +677,9 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                             console.log('Client: connection established with server');
                             client.write("\r\n"); // to avoid bug
                             // writing data to server
-                            client.write("copy "+sharedFolder+currentSubfolder+"build/isocd RAM:\r\n"); 
-                            client.write("copy "+sharedFolder+currentSubfolder+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
-                            client.write("copy "+sharedFolder+currentSubfolder+"build/Layout"+support.type.toUpperCase()+" RAM:\r\n");
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/isocd RAM:\r\n"); 
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/Layout"+support.type.toUpperCase()+" RAM:\r\n");
                             client.write("RAM:\r\n");
                             const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r\n"
                             console.log(command);
