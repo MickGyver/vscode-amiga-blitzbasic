@@ -631,7 +631,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                         listFolderForISO(dirBuildISO,isoDesc,1,{countFolder: 1},1)
                         
                         // folder list
-                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder+'build/iso-build-'+support.type.toUpperCase()+'\n'
+                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder.replace('\\','/')+'build/iso-build-'+support.type.toUpperCase()+'\n'
                         layout+=' 0001	<Root Dir>\n'
                         isoDesc.folders.forEach( (value,key) => { 
                             value.forEach(name => {
@@ -677,9 +677,9 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                             console.log('Client: connection established with server');
                             client.write("\r\n"); // to avoid bug
                             // writing data to server
-                            client.write("copy "+sharedFolder+currentSubfolder+"build/isocd RAM:\r\n"); 
-                            client.write("copy "+sharedFolder+currentSubfolder+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
-                            client.write("copy "+sharedFolder+currentSubfolder+"build/Layout"+support.type.toUpperCase()+" RAM:\r\n");
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/isocd RAM:\r\n"); 
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/Layout"+support.type.toUpperCase()+" RAM:\r\n");
                             client.write("RAM:\r\n");
                             const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r\n"
                             console.log(command);
