@@ -1,24 +1,24 @@
 # Amiga Blitz Basic 2 Language Support - Javascript Native Edition
 
-This extension adds language support for the Amiga version of Blitz Basic 2 (and Amiblitz). The extension is in alpha state so syntax highlighting is still limited. Big thanks to Youen Chéné who has made a lot of improvements to this extension!
+This extension adds language support for the Amiga version of Blitz Basic 2 (and Amiblitz) with limited syntax highlighting support. Big thanks to Youen Chéné who has made a lot of improvements to this extension!
 
 ## TL;DR
 
-**!! NEW KEY BINDING !!**
+**!! NEW KEY BINDINGS !!**
 
-To open and run your current blitz basic 2 program on UAE use the shortcut `Ctrl-F6` (Win, Linux) or `Cmd-F6`(Mac).
+To open and run your current Blitz Basic 2 source file (.bba) on UAE, use the shortcut `Ctrl-F6` (Win, Linux) or `Cmd-F6`(Mac).
 
-To open all your current folder blitz basic 2 files (.bba) program on UAE use the shortcut `Ctrl-F7` (Win, Linux) or `Cmd-F7`(Mac).
+To open the Blitz Basic 2 source files (.bba) in your current folder, use the shortcut `Ctrl-F7` (Win, Linux) or `Cmd-F7`(Mac).
 
-To open all your current folder blitz basic 2 files  AND to run your current blitz basic 2 program on UAE use the shortcut `Ctrl-F8` (Win, Linux) or `Cmd-F8`(Mac).
+To open the Blitz Basic 2 source files (.bba) in your current folder AND run them on UAE, use the shortcut `Ctrl-F8` (Win, Linux) or `Cmd-F8`(Mac).
 
-To package an ADF (let's say you already generate an executable with blitz basic 2) `Ctrl-F4` (Win, Linux) or `Cmd-F4`(Mac).
+To package an ADF, use the shortcut `Ctrl-F4` (Win, Linux) or `Cmd-F4`(Mac). You need to manually create an executable in Blitz Basic 2 before using this feature.
 
-To package an ISO for CTDV or CD32 (let's say you already generate an executable with blitz basic 2) `Ctrl-F3` (Win, Linux) or `Cmd-F3`(Mac).
+To package an ISO for CTDV or CD32, use the shortcut `Ctrl-F3` (Win, Linux) or `Cmd-F3`(Mac). You need to manually create an executable in Blitz Basic 2 before using this feature.
 
-To package an ZIP for HD Install (let's say you already generate an executable with blitz basic 2) `Ctrl-F2` (Win, Linux) or `Cmd-F2`(Mac).
+To package a ZIP archive for HD Install, use the shortcut `Ctrl-F2` (Win, Linux) or `Cmd-F2`(Mac). You need to manually create an executable in Blitz Basic 2 before using this feature.
 
-Run on real Amiga is deactivated (need the proper serial cable to test it).
+The feature "Run on real Amiga" is deactivated for the time being (the feature needs testing).
 
 ## Note
 
@@ -26,23 +26,23 @@ This version now includes the native javascript improvements by Youen Chéné, s
 
 ## Compatibility
 
-All OS support VSCode and UAE(or a real Amiga).
+All operating systems that can run both VS Code and UAE.
 
 ## Getting Started
 
-1. Please process to the [requirements](#requirements) to setup your UAE and Amiga OS.
+1. Please process to the [requirements](#requirements) to setup UAE and Amiga OS.
 
-2. Add a file with the extension **.bba** (Blitz Basic Ascii), it's where you will write your Blitz Basic code. 
+2. Add a source file with the extension **.bba** (Blitz Basic Ascii), it's where you will write your Blitz Basic code. 
 
-3. Code enjoy the inline help and snippets.
+3. Code and enjoy the inline help and snippets.
 
-4. Have your UAE and Amiga OS open.
+4. Have UAE and Amiga OS open.
 
-5. When you do the shortcut to run on UAE (`Cmd - F6`or `Ctrl - F6`), it will :
-   - write a **copy** of your file with the extension **.bb2** (so TED don't mess up your original .bba file),
+5. When you execture the shortcut to run on UAE (`Cmd - F6`or `Ctrl - F6`), VS Code will :
+   - write a **copy** of your file with the extension **.bb2** (so TED don't mess up your original .bba file)
    - copy all necessary files for Amiga OS,
-   - launch AREXX script to launch TED/Blitz Basic 2 and then **compile and run** automatically your code.
-   - sometimes it failed, just retry the shortcut, sometimes you need to reboot your Amiga OS.
+   - launch the AREXX script to launch TED/Blitz Basic 2 and then **compile and run** your code automatically.
+   - sometimes the process can fail, just retry the shortcut, sometimes you need to reboot your Amiga OS.
 
 6. Enjoy coding in Blitz Basic 2 in a modern way!
 
@@ -62,7 +62,7 @@ All OS support VSCode and UAE(or a real Amiga).
 ![compil and run into UAE](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/compil.jpg)
 
 ### - Commands for running the app/game on a real Amiga (requires command line tools, see below).
-### - Settings to tune the integration to your UAE :
+### - Settings to tune the integration of your UAE installation:
 
 ![Extension Settings](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/settings.jpg)
 
@@ -100,11 +100,11 @@ Each support entry (multi disk and multi support) support the following paramete
 
 `type` : `adf`
 
-`boot` : `true` for the booting disk, `false` for the other disk.
+`boot` : `true` to create a bootable disk (first disk of the game/app), `false` for any other disk.
 
-`supportName`: name of your adf, floppy, cdrom. It's the name that will be shown by workbench. Choose a different name for each support entry of the config file.
+`supportName`: name of your adf, floppy, cdrom. It's the name that will be shown by Workbench. Choose a different name for each support entry of the config file.
 
-`exeToLaunch`: the exe to launch on startup sequence.
+`exeToLaunch`: the exe to launch in startup sequence.
 
 `includeDiskFontLibrary`: for bootable support, `true` if you do disk access in your software.
 
@@ -112,21 +112,21 @@ Each support entry (multi disk and multi support) support the following paramete
 
 `filesToIncludeOnRoot`: list all the files to include on the root folder of the support, typically your executable and .info files.
 
-`filesToIncludeOnRoot`: list all the folders to include on the root folder of the support, typically your assets. It includes automatically all sub-folders.
+`filesToIncludeOnRoot`: list all the folders to include on the root folder of the support, typically your assets. All sub-folders are included automatically.
 
 
-**At the end of the process, your ADF is available in the build folder**.
+**At the end of the process, your ADF file is available in the build folder**.
 
 ### - [Experimental] Generate ISO for CDTV and CD32 from a `packaging.json` file created at the root folder of your project using  `Ctrl-F3` (Win, Linux) or `Cmd-F3`(Mac) :
 
-Before you start you need extra package that are under copyright from the CDTV and CD32 Commodore Developer Kit (dig into google and eababime.net forums) :
+Before you start you need extra files that are under copyright from the CDTV and CD32 Commodore Developer Kit (dig into google and eababime.net forums) :
 
-- CDTV.TM file (from CDTV and CD32 dev kit),
-- CD32.TM file (from CD32 dev kit),
-- RMTM executable file (from CDTV dev kit),
-- isocd executable file (from CD32 dev kit).
+- CDTV.TM file (from CDTV and CD32 dev kit)
+- CD32.TM file (from CD32 dev kit)
+- RMTM executable file (from CDTV dev kit)
+- isocd executable file (from CD32 dev kit)
 
-Then you need to paste the path of these files into the extension settings :
+You need to enter the path of these files into the extension settings :
 
 ![Extension Settings for ISO packaging](https://raw.githubusercontent.com/MickGyver/vscode-amiga-blitzbasic/main/resources/images/iso-settings.jpg)
 
@@ -185,16 +185,16 @@ Then you need to paste the path of these files into the extension settings :
 
 More information on https://wiki.osdev.org/ISO_9660
 
-The iso packaging works that way :
+The iso packaging works this way :
 
-- it prepares a folder for the iso,
-- it generates and copy the ISO Layout for isocd,
-- it launch isocd command line  in UAE and then close isocd.
-- your iso is available in the build folder.
+- it first prepares a folder for the iso
+- it then generates and copies the ISO Layout for isocd
+- it launches the isocd command line in UAE and then closes isocd
+- your iso will be available in the build folder
 
 [Quick demonstration](https://www.youtube.com/watch?v=0EuKqFit3tg)
 
-### - Generate ZIP file for Hard Disk Installation from a `packaging.json` file created at the root folder of your project using  `Ctrl-F2` (Win, Linux) or `Cmd-F2`(Mac) :
+### - Generate a ZIP archive for Hard Disk Installation from a `packaging.json` file created at the root folder of your project using  `Ctrl-F2` (Win, Linux) or `Cmd-F2`(Mac) :
 
 ```json
 {
@@ -220,11 +220,13 @@ Each support entry (multi disk and multi support) support the following paramete
 
 `folderIcon`: icon path (.info) for the containing folder inside the zip file. The folder of your game in your hard disk will appear with this icon.
 
-**At the end of the process, your ZIP is available in the build folder**.
+**At the end of the process, your ZIP archiveis available in the build folder**.
 
 ## Requirements
 
-You only need to configure your UAE and Amiga OS :
+You only need to configure UAE and Amiga OS:
+
+1. Install Amiga OS (3.x) and Blitz Basic 2 if you haven't already done so.
 
 1. Ensure that AREXX is started with WorkBench. The line:
 
@@ -236,12 +238,15 @@ You only need to configure your UAE and Amiga OS :
     user-startup.
    
 2. In WinUae set serial port to TCP://0.0.0.0:1234 and select "Direct" below the drop down box (Settings
-    / Host / IO ports). Save the WinUAE configuration and quit WinUAE, add the following to the
-    configuration file manually (under the other lines concerning serial): serial_translate=crlf_cr
+    / Host / IO ports). Deselect any other options for the serial port. Save the WinUAE configuration and
+    quit WinUAE, open the configuration file in a text editor and add the following to the configuration
+    file manually (under the other lines concerning serial):
+
+    serial_translate=crlf_cr
    
-    (NOTE: You need to ensure that your firewall/antivirus allows network traffic for WinUAE.)
+    NOTE: You need to ensure that your firewall/antivirus allows network traffic for WinUAE.
    
-3. Create the file DEVS:MountList on the virtual harddrive with the following content (if it does not
+4. Create the file DEVS:MountList on the virtual harddrive with the following content (if it does not
     already exist)
 
     ```   
@@ -251,28 +256,27 @@ You only need to configure your UAE and Amiga OS :
     Priority = 5
     ```
 
-4. Add the following commands to the end of S:user-startup
+5. Add the following commands to the end of S:user-startup
 
     ```    
     mount aux:
     newshell aux:
     ```  
 
-5. Add virtual hard disk pointing to the folders containing your code
+6. Add a virtual hard disk pointing to the folder containing your Blitz Basic 2 projects (this folder can have sub folders with code).
  
-    This is the same folder that you added to your Visual Studio Code workspace.
+    This same folder must be your Visual Studio Code workspace folder.
 
-    By default, the folder is named **SharedCode** so the virtual  harddrive can be called as `SharedCode:` in Amiga OS.
-
-6. Of Course Amiga OS (3.x) with Blitz Basic 2 installed.
+    The device name and volume label of the virtual harddrive must match the "Shared Folder" setting for this extension. By default,
+    the folder is named **SharedCode** but you can change this in the settings for the extension (on user or workspace level). 
 
 ## Known Issues
 
-Syntax highlighting is still very limited.
+Syntax highlighting is limited.
 
-Run to Amiga is not implemented and tested yet in this version.
+Run on real Amiga is not implemented and tested yet in this version.
 
-Random couldn't open file error on Ted/Blitz2.
+Random couldn't open file error on Ted/Blitz2. (try an older version of UAE, personally I had these errors in WinUAE 6.0 but 4.4 works perfectly).
 
 
 ## To contact the contributors
