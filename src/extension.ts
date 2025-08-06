@@ -9,6 +9,7 @@ var net = require('net');
 import { zip, COMPRESSION_LEVEL } from 'zip-a-folder';
 import Adf from './adfFS';
 import { stringify } from 'querystring';
+import {exec} from 'child_process'
 
 
 
@@ -126,15 +127,15 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
     {
         if (run && !all)
         {
-            vscode.window.showInformationMessage('Opening current and Running current in UAE...');
+            vscode.window.showInformationMessage('Running current file in UAE...');
         }
         if (run && all)
         {
-            vscode.window.showInformationMessage('Opening all and Running current in UAE...');
+            vscode.window.showInformationMessage('Opening all files and running current file in UAE...');
         }
         if (!run&& all)
         {
-            vscode.window.showInformationMessage('Opening all file in UAE...');
+            vscode.window.showInformationMessage('Opening all files in UAE...');
         }
         if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
 
@@ -205,7 +206,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     port: settings.UAEPort
                 });
                 
-                let outData:string;
+                let outData:string = "";
                 client.on('connect',function(){
                     console.log('Client: connection established with server');
                     client.write("\r\n"); // to avoid bug
@@ -219,6 +220,15 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/BB2NagAway C:\r\n"); 
                     client.write(command);
 
+                });
+
+                client.on('error', function(e:any) {
+                    if(e.code == 'ECONNREFUSED')
+                    {
+                        console.log('Connection to UAE failed! Starting UAE...');
+                        vscode.window.showInformationMessage('Starting UAE, execute shortcut again!');
+                        exec(settings.UAECommandLine, (error, stdout, stderr) => {});
+                    }
                 });
                 
                 client.setEncoding('utf8');

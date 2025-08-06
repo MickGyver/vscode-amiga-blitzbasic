@@ -8,7 +8,7 @@
 		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.9.1",
+	"version": "0.9.2",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -34,6 +34,11 @@
 					"type": "string",
 					"default": "SharedCode",
 					"description": "Virtual harddrive volume name in UAE (if not present the `:` wil be added automatically). It the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match to your workspace path."
+				},
+				"AmigaBlitzBasic2.UAECommandLine": {
+					"type": "string",
+					"default": "",
+					"description": "The full command line for running UAE, including config file and other parameters."
 				},
 				"AmigaBlitzBasic2.UAEPort": {
 					"type": "number",
