@@ -40,6 +40,11 @@
 					"default": "",
 					"description": "The full command line for running UAE, including config file and other parameters."
 				},
+				"AmigaBlitzBasic2.UAELaunchDelay": {
+					"type": "number",
+					"default": 7,
+					"description": "Number of seconds to wait for Amiga OS to launch in UAE."
+				},
 				"AmigaBlitzBasic2.UAEPort": {
 					"type": "number",
 					"default": 1234,

@@ -139,7 +139,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
         }
         if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
 
-            const ext=path.extname(vscode.window.activeTextEditor.document.fileName)
+            const ext=path.extname(vscode.window.activeTextEditor.document.fileName);
             
             if (ext == '.bb' || ext == '.bb2' || ext == '.bba') {
 
@@ -202,8 +202,11 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 console.log(command);
             
                 var client  = new net.Socket();
-                client.connect({
-                    port: settings.UAEPort
+
+                const connect = () => { client.connect({ port: settings.UAEPort }); };
+
+                client.once('connect', function() {
+                    console.log('Connected to UAE!');
                 });
                 
                 let outData:string = "";
@@ -220,27 +223,34 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/BB2NagAway C:\r\n"); 
                     client.write(command);
 
+                    setTimeout(function(){
+                        console.log("Client disconnecting, data received: " + outData);
+                        client.end('Bye bye server');
+                    },1000);
+
                 });
 
+                let retried:boolean = false;
                 client.on('error', function(e:any) {
-                    if(e.code == 'ECONNREFUSED')
+                    if(!retried && e.code === 'ECONNREFUSED')
                     {
                         console.log('Connection to UAE failed! Starting UAE...');
-                        vscode.window.showInformationMessage('Starting UAE, execute shortcut again!');
-                        exec(settings.UAECommandLine, (error, stdout, stderr) => {});
+                        //vscode.window.showInformationMessage('Starting UAE, please wait!');
+                        if(settings.UAECommandLine.length > 0) {
+                            exec(settings.UAECommandLine, (error, stdout, stderr) => {});
+                            setTimeout(connect,settings.UAELaunchDelay*1000);
+                        }
+                        retried = true;
                     }
                 });
+
+                connect();
                 
                 client.setEncoding('utf8');
                 
                 client.on('data',function(data:any){
-                    outData+=data
+                    outData+=data;
                 });
-                
-                setTimeout(function(){
-                console.log(outData);
-                client.end('Bye bye server');
-                },1000);
 
             }
         }
