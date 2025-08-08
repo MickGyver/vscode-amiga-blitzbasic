@@ -36,7 +36,7 @@ All operating systems that can run both VS Code and UAE.
 
 3. Code and enjoy the inline help and snippets.
 
-4. Have UAE and Amiga OS open. UAE can also be launched automatically if you enter a full command line to UAE in the extension settings (see below).
+4. Have UAE and Amiga OS open. Note: UAE can also be launched automatically if you enter a full command line to UAE in the extension settings (see below).
 
 5. When you execture the shortcut to run on UAE (`Cmd - F6`or `Ctrl - F6`), VS Code will :
    - write a **copy** of your file with the extension **.bb2** (so TED don't mess up your original .bba file)
@@ -269,6 +269,17 @@ You only need to configure UAE and Amiga OS:
 
     The device name and volume label of the virtual harddrive must match the "Shared Folder" setting for this extension. By default,
     the folder is named **SharedCode** but you can change this in the settings for the extension (on user or workspace level). 
+
+## Launching UAE Automatically
+
+UAE can be launched automatically if you enter a full command line for UAE in the settings for this extension. UAE needs to be launched with a configuration file that has everything setup for Blitz Basic 2 development, and it needs to be launched without showing the GUI. For Windows something like this would do:
+```
+C:\WinUAE\winuae.exe -config=C:\WinUAE\Configurations\A1200BlitzBasic.uae -s use_gui=no
+```
+For Ubuntu Linux (FS-UAE installed using Snap):
+```
+/snap/bin/fsuae.fs-uae ~/snap/fsuae/common/FS-UAE/Configurations/A1200.fs-uae
+```
 
 ## Known Issues
 
