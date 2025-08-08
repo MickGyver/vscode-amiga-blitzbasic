@@ -226,7 +226,7 @@ Each support entry (multi disk and multi support) support the following paramete
 
 You only need to configure UAE and Amiga OS:
 
-1. Install Amiga OS (3.x) and Blitz Basic 2 if you haven't already done so.
+1. Install Amiga OS (3.x) and Blitz Basic 2 or AmiBlitz 3.x if you haven't already done so.
 
 1. Ensure that AREXX is started with WorkBench. The line:
 
@@ -263,12 +263,20 @@ You only need to configure UAE and Amiga OS:
     newshell aux:
     ```  
 
-6. Add a virtual hard disk pointing to the folder containing your Blitz Basic 2 projects (this folder can have sub folders with code).
+6. Add a virtual hard disk pointing to the folder containing your Blitz Basic 2 or AmiBlitz 3 projects (this folder can have sub folders with code).
  
     This same folder must be your Visual Studio Code workspace folder.
 
     The device name and volume label of the virtual harddrive must match the "Shared Folder" setting for this extension. By default,
-    the folder is named **SharedCode** but you can change this in the settings for the extension (on user or workspace level). 
+    the folder is named **SharedCode** but you can change this in the settings for the extension (on user or workspace level).
+
+7. For AmiBlitz, you must create an AmiBlitz: assign in your user-startup, similar to the Blitz: assign that is created automatically during installation of Blitz Basic 2. The assign must point to your Amiblitz installation folder. Like this (AmiBlitz installed in the DH0:Apps folder):
+
+    ```
+    ASSIGN AmiBlitz: DH0:Apps/AmiBlitz
+    ```
+
+    For Amiblitz, you also have to set a screenmode of 16 colors or more, otherwise you will get a nag screen that will break the automation.
 
 ## Launching UAE Automatically
 
@@ -297,6 +305,8 @@ Random couldn't open file error on Ted/Blitz2. (You can try an older version of 
 [@youen_chene](https://twitter.com/youen_chene)
 
 ## Release Notes
+## 0.10.0
+- AmiBlitz 3.x support (through ARexx, command line support might be added later)
 ## 0.9.5
 - Option to launch UAE automatically. You need to give a full command line for launching UAE in the extension settings. See above for details. 
 ## 0.9.1
