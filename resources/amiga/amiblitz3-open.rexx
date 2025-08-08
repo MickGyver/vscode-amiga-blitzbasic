@@ -53,6 +53,3 @@ END
 
 /* Load the main project file (first command line parameter) */
 LOAD parameter.1
-
-/* Compile the project */
-COMPILE

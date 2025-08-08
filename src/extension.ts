@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
         sharedFolder+=':';
     }
 
-    if (settings.blitzType==="ab3") {
+    if (settings.blitzType==="AB3") {
         console.log('AmiBlitz3 mode');
     } else {
         console.log('BlitzBasic2 mode');
@@ -155,7 +155,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName);
                 const currentSubfolder= file.substring(0,file.length-mainFile.length);
                 let includes: string[]=[];
-                if (settings.blitzType==='bb2') {
+                if (settings.blitzType==='BB2') {
                     if (all) {
                         var files = fs.readdirSync(folder);
                         files.forEach((f) => {
@@ -187,7 +187,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     fs.mkdirSync(dir, 0o744);
                 }
                 let arexxFile='blitzbasic2';
-                if (settings.blitzType==='ab3') {
+                if (settings.blitzType==='AB3') {
                     arexxFile='amiblitz3';
                 }
 
@@ -197,7 +197,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 else {
                     replaceFile(context.extensionPath + '/resources/amiga/'+arexxFile+'-open.rexx',dir+'/'+arexxFile+'-open.rexx'); 
                 }
-                if (settings.blitzType==='bb2') {
+                if (settings.blitzType==='BB2') {
                     replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway'); 
                 }
 
@@ -210,7 +210,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 else {
                     command='rx S:'+arexxFile+'-open.rexx ';
                 }
-                if (settings.blitzType==='bb2') {
+                if (settings.blitzType==='BB2') {
                     command+=" \""+sharedFolder+file.replace('.bba','.bb2').replace('\\','/')+"\"";
                 } else {
                     command+=" \""+sharedFolder+file.replace('\\','/')+"\"";
@@ -241,7 +241,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     else {
                         client.write('copy "'+sharedFolder+currentSubfolder.replace('\\','/')+'build/'+arexxFile+'-open.rexx" S:\r\n');
                     }
-                    if (settings.blitzType==='bb2') {
+                    if (settings.blitzType==='BB2') {
                         client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/BB2NagAway C:\r\n"); 
                     }
                     client.write(command);

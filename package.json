@@ -32,12 +32,13 @@
 			"properties": {
 				"AmigaBlitzBasic2.blitzType": {
 					"type": "string",
-					"default": "bb2",
-					"enum": ["bb2", "ab3"],
+					"default": "BB2",
+					"enum": ["BB2", "AB3"],
 					"enumDescriptions": [
 					  "Blitz Basic 2 - SuperTed",
 					  "AmiBlitz 3.x"
-					]
+					],
+					"description": "Which Blitz do you use, AmiBlitz 3.x or Blitz Basic 2?"
 				},
 				"AmigaBlitzBasic2.sharedFolder": {
 					"type": "string",
