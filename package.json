@@ -8,7 +8,7 @@
 		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.9.5",
+	"version": "0.10.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -30,6 +30,15 @@
 		"configuration": {
 			"title": "Amiga Blitz Basic 2",
 			"properties": {
+				"AmigaBlitzBasic2.blitzType": {
+					"type": "string",
+					"default": "bb2",
+					"enum": ["bb2", "ab3"],
+					"enumDescriptions": [
+					  "Blitz Basic 2 - SuperTed",
+					  "AmiBlitz 3.x"
+					]
+				},
 				"AmigaBlitzBasic2.sharedFolder": {
 					"type": "string",
 					"default": "SharedCode",
@@ -104,7 +113,8 @@
 				"extensions": [
 					".bb",
 					".bb2",
-					".bba"
+					".bba",
+					".ab3"
 				],
 				"configuration": "./language-configuration.json"
 			}

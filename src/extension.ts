@@ -28,6 +28,12 @@ export function activate(context: vscode.ExtensionContext) {
     if (sharedFolder.substring(sharedFolder.length-1,sharedFolder.length)) {
         sharedFolder+=':';
     }
+
+    if (settings.blitzType==="ab3") {
+        console.log('AmiBlitz3 mode');
+    } else {
+        console.log('BlitzBasic2 mode');
+    }
     
     console.log("Loading Blitz Basic 2 documentation...");
     let xml=fs.readFileSync(context.extensionPath+'/resources/doc/bb2doc.xml','utf8');
@@ -141,7 +147,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
 
             const ext=path.extname(vscode.window.activeTextEditor.document.fileName);
             
-            if (ext == '.bb' || ext == '.bb2' || ext == '.bba') {
+            if (ext == '.bb' || ext == '.bb2' || ext == '.bba'|| ext == '.ab3') {
 
                 vscode.window.activeTextEditor.document.save();
 
@@ -149,51 +155,66 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName);
                 const currentSubfolder= file.substring(0,file.length-mainFile.length);
                 let includes: string[]=[];
-                if (all) {
-                    var files = fs.readdirSync(folder);
-                    files.forEach((f) => {
-                        if (path.extname(f)=='.bba') {
-                        let target=folder+'/'+f.replace('.bba','.bb2');
-                        replaceFile(folder+'/'+f,target); //.bba file on vscode side, .bb2 for Ted on the amiga.
-                        //Clean end of line to LF (CR/LF trigger error in BB2 compilation)
-                        if (fs.existsSync(target)) {
-                            let inContent=fs.readFileSync(target,'utf8');
-                            const outContent=inContent.replace(/\r\n/g, "\n");
-                            fs.writeFileSync(target, outContent);
-                        } else {
-                            console.log("Can't find file "+target+", skip crlf to lf.");
+                if (settings.blitzType==='bb2') {
+                    if (all) {
+                        var files = fs.readdirSync(folder);
+                        files.forEach((f) => {
+                            if (path.extname(f)=='.bba') {
+                                let target=folder+'/'+f.replace('.bba','.bb2')
+                                replaceFile(folder+'/'+f,target); //.bba file on vscode side, .bb2 for Ted on the amiga.
+                                //Clean end of line to LF (CR/LF trigger error in BB2 compilation)
+                                if (fs.existsSync(target)) {
+                                    let inContent=fs.readFileSync(target,'utf8')
+                                    const outContent=inContent.replace(/\r\n/g, "\n")
+                                    fs.writeFileSync(target, outContent);
+                                } else {
+                                    console.log("Can't find file "+target+", skip crlf to lf.")
+                                }
+                            
+                                if (f !== mainFile) {
+                                    includes.push(sharedFolder+currentSubfolder+f.replace('.bba','.bb2'))
+                                }
+                            }
+                        });
+                    } else {
+                        if (path.extname(mainFile)=='.bba') {
+                            replaceFile(folder+'/'+mainFile,folder+'/'+mainFile.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
                         }
-                       
-                        if (f !== mainFile) {
-                            includes.push(sharedFolder+currentSubfolder+f.replace('.bba','.bb2'));
-                        }
-                        }
-                    });
-                } else {
-                    replaceFile(folder+'/'+mainFile,folder+'/'+mainFile.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
+                    }
                 }
                 let dir = folder + '/build';
                 if (!fs.existsSync(dir)) {
                     fs.mkdirSync(dir, 0o744);
                 }
+                let arexxFile='blitzbasic2';
+                if (settings.blitzType==='ab3') {
+                    arexxFile='amiblitz3';
+                }
+
                 if (run) {
-                    replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2.rexx',dir+'/blitzbasic2.rexx'); 
+                    replaceFile(context.extensionPath + '/resources/amiga/'+arexxFile+'.rexx',dir+'/'+arexxFile+'.rexx'); 
                 }
                 else {
-                    replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2-open.rexx',dir+'/blitzbasic2-open.rexx'); 
+                    replaceFile(context.extensionPath + '/resources/amiga/'+arexxFile+'-open.rexx',dir+'/'+arexxFile+'-open.rexx'); 
                 }
-                replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway'); 
+                if (settings.blitzType==='bb2') {
+                    replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway'); 
+                }
 
                 console.log('Connecting in TCP (AUX:) to UAE');
 
                 let command:string;
                 if (run) {
-                 command="rx S:blitzbasic2.rexx ";
+                 command='rx S:'+arexxFile+'.rexx ';
                 }
                 else {
-                    command="rx S:blitzbasic2-open.rexx ";
+                    command='rx S:'+arexxFile+'-open.rexx ';
                 }
-                command+=" \""+sharedFolder+file.replace('.bba','.bb2').replace('\\','/')+"\"";
+                if (settings.blitzType==='bb2') {
+                    command+=" \""+sharedFolder+file.replace('.bba','.bb2').replace('\\','/')+"\"";
+                } else {
+                    command+=" \""+sharedFolder+file.replace('\\','/')+"\"";
+                }
                 includes.forEach((include) => {
                     command+=" \""+include.replace('\\','/')+"\"";
                 });
@@ -215,12 +236,14 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     client.write("\r\n"); // to avoid bug
                     // writing data to server
                     if (run) {
-                        client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/blitzbasic2.rexx S:\r\n"); //To avoid when things goes wrong on the amiga
+                        client.write('copy "'+sharedFolder+currentSubfolder.replace('\\','/')+'build/'+arexxFile+'.rexx" S:\r\n'); //To avoid when things goes wrong on the amiga
                     }
                     else {
-                        client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/blitzbasic2-open.rexx S:\r\n");
+                        client.write('copy "'+sharedFolder+currentSubfolder.replace('\\','/')+'build/'+arexxFile+'-open.rexx" S:\r\n');
                     }
-                    client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/BB2NagAway C:\r\n"); 
+                    if (settings.blitzType==='bb2') {
+                        client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/BB2NagAway C:\r\n"); 
+                    }
                     client.write(command);
 
                     setTimeout(function(){
