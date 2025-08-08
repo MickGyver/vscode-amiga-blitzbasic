@@ -36,7 +36,7 @@ All operating systems that can run both VS Code and UAE.
 
 3. Code and enjoy the inline help and snippets.
 
-4. Have UAE and Amiga OS open.
+4. Have UAE and Amiga OS open. UAE can also be launched automatically if you enter a full command line to UAE in the extension settings (see below).
 
 5. When you execture the shortcut to run on UAE (`Cmd - F6`or `Ctrl - F6`), VS Code will :
    - write a **copy** of your file with the extension **.bb2** (so TED don't mess up your original .bba file)
@@ -83,7 +83,7 @@ All operating systems that can run both VS Code and UAE.
             "supportName": "Blower",
             "exeToLaunch": "blower.exe",
             "includeDiskFontLibrary": true,
-            "includeMathTransLibrary": false,
+            "includeMathTransLibrary": true,
             "filesToIncludeOnRoot": [
                 "blower.exe",
                 "blower.exe.info"
@@ -143,7 +143,7 @@ You need to enter the path of these files into the extension settings :
             "supportApplication": "",
             "exeToLaunch": "blower.exe",
             "includeDiskFontLibrary": true,
-            "includeMathTransLibrary": false,
+            "includeMathTransLibrary": true,
             "filesToIncludeOnRoot": [
                 "blower.exe",
                 "blower.exe.info"
@@ -162,7 +162,7 @@ You need to enter the path of these files into the extension settings :
             "supportApplication": "",
             "exeToLaunch": "blower.exe",
             "includeDiskFontLibrary": true,
-            "includeMathTransLibrary": false,
+            "includeMathTransLibrary": true,
             "filesToIncludeOnRoot": [
                 "blower.exe",
                 "blower.exe.info"
@@ -276,7 +276,7 @@ Syntax highlighting is limited.
 
 Run on real Amiga is not implemented and tested yet in this version.
 
-Random couldn't open file error on Ted/Blitz2. (try an older version of UAE, personally I had these errors in WinUAE 6.0 but 4.4 works perfectly).
+Random couldn't open file error on Ted/Blitz2. (You can try an older version of UAE, personally I had these errors in WinUAE 6.0 but for version 4.4 it works perfectly).
 
 
 ## To contact the contributors
@@ -286,10 +286,12 @@ Random couldn't open file error on Ted/Blitz2. (try an older version of UAE, per
 [@youen_chene](https://twitter.com/youen_chene)
 
 ## Release Notes
+## 0.9.5
+- Option to launch UAE automatically. You need to give a full command line for launching UAE in the extension settings. See above for details. 
 ## 0.9.1
-- Fixes for windows compatibility
+- Fixes for Windows compatibility
 ## 0.9.0
-- Zip packaging for HD Installation'
+- Zip packaging for HD Installation
 ## 0.8.0
 - [Experimental] CDTV and CD32 Packaging
 - Fix to avoid cannot Open File in BB2 Editor.

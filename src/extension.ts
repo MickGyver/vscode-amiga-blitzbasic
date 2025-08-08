@@ -3,13 +3,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as xml2js from 'xml2js';
-var naturalCompare = require("natural-compare-lite")
+var naturalCompare = require("natural-compare-lite");
 var path = require('path');
 var net = require('net');
 import { zip, COMPRESSION_LEVEL } from 'zip-a-folder';
 import Adf from './adfFS';
 import { stringify } from 'querystring';
-import {exec} from 'child_process'
+import {exec} from 'child_process';
 
 
 
@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 
 
-    const settings = vscode.workspace.getConfiguration('AmigaBlitzBasic2')
+    const settings = vscode.workspace.getConfiguration('AmigaBlitzBasic2');
 
     let sharedFolder =settings.sharedFolder;
     if (sharedFolder.substring(sharedFolder.length-1,sharedFolder.length)) {
@@ -145,27 +145,27 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
 
                 vscode.window.activeTextEditor.document.save();
 
-                const folder=path.dirname(vscode.window.activeTextEditor.document.fileName)
-                const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName)
-                const currentSubfolder= file.substring(0,file.length-mainFile.length)
+                const folder=path.dirname(vscode.window.activeTextEditor.document.fileName);
+                const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName);
+                const currentSubfolder= file.substring(0,file.length-mainFile.length);
                 let includes: string[]=[];
                 if (all) {
                     var files = fs.readdirSync(folder);
                     files.forEach((f) => {
                         if (path.extname(f)=='.bba') {
-                        let target=folder+'/'+f.replace('.bba','.bb2')
+                        let target=folder+'/'+f.replace('.bba','.bb2');
                         replaceFile(folder+'/'+f,target); //.bba file on vscode side, .bb2 for Ted on the amiga.
                         //Clean end of line to LF (CR/LF trigger error in BB2 compilation)
                         if (fs.existsSync(target)) {
-                            let inContent=fs.readFileSync(target,'utf8')
-                            const outContent=inContent.replace(/\r\n/g, "\n")
+                            let inContent=fs.readFileSync(target,'utf8');
+                            const outContent=inContent.replace(/\r\n/g, "\n");
                             fs.writeFileSync(target, outContent);
                         } else {
-                            console.log("Can't find file "+target+", skip crlf to lf.")
+                            console.log("Can't find file "+target+", skip crlf to lf.");
                         }
                        
                         if (f !== mainFile) {
-                            includes.push(sharedFolder+currentSubfolder+f.replace('.bba','.bb2'))
+                            includes.push(sharedFolder+currentSubfolder+f.replace('.bba','.bb2'));
                         }
                         }
                     });
@@ -297,76 +297,76 @@ class ABB2DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
         return new Promise((resolve, reject) => 
         {
             let symbols: vscode.DocumentSymbol[] = [];
-            let nodes = [symbols]
+            let nodes = [symbols];
 
             for (var i = 0; i < document.lineCount; i++) {
                 var line = document.lineAt(i);
 
-                let tokens = line.text.split(" ")
+                let tokens = line.text.split(" ");
 
 				if(line.text.endsWith(":"))
 				{
-					let marker_symbol = new vscode.DocumentSymbol(
+					let markerSymbol = new vscode.DocumentSymbol(
                         tokens[0].substring(0,tokens[0].length-1),
                         '',
                         vscode.SymbolKind.Enum,
-                        line.range, line.range)
+                        line.range, line.range);
 
 
-                    nodes[nodes.length-1].push(marker_symbol)
+                    nodes[nodes.length-1].push(markerSymbol);
 				}
 				else if(line.text.startsWith("."))
 				{
-					let marker_symbol = new vscode.DocumentSymbol(
+					let markerSymbol = new vscode.DocumentSymbol(
                         tokens[0].substring(1,tokens[0].length),
                         '',
                         vscode.SymbolKind.Enum,
-                        line.range, line.range)
+                        line.range, line.range);
 
 
-                    nodes[nodes.length-1].push(marker_symbol)
+                    nodes[nodes.length-1].push(markerSymbol);
 				}
 				else if(line.text.startsWith("Function"))
 				{
 					var text = line.text.replace(/\s\s+/g, ' ');
 					var index = text.indexOf( ' ', text.indexOf( ' ' ) + 1 );
 
-					let marker_symbol = new vscode.DocumentSymbol(
+					let markerSymbol = new vscode.DocumentSymbol(
                         text.substring(index+1),
                         '',
                         vscode.SymbolKind.Function,
-                        line.range, line.range)
+                        line.range, line.range);
 
 
-                    nodes[nodes.length-1].push(marker_symbol)
+                    nodes[nodes.length-1].push(markerSymbol);
 				}
 				else if(line.text.startsWith("Statement"))
 				{
 					var text = line.text.replace(/\s\s+/g, ' ');
 					var index = text.indexOf(' ');
 
-					let marker_symbol = new vscode.DocumentSymbol(
+					let markerSymbol = new vscode.DocumentSymbol(
                         text.substring(index+1),
                         '',
                         vscode.SymbolKind.Method,
-                        line.range, line.range)
+                        line.range, line.range);
 
 
-                    nodes[nodes.length-1].push(marker_symbol)
+                    nodes[nodes.length-1].push(markerSymbol);
 				}
 				else if(line.text.startsWith("Macro"))
 				{
 					var text = line.text.replace(/\s\s+/g, ' ');
 					var index = text.indexOf(' ');
 
-					let marker_symbol = new vscode.DocumentSymbol(
+					let markerSymbol = new vscode.DocumentSymbol(
                         text.substring(index+1),
                         '',
                         vscode.SymbolKind.Key,
-                        line.range, line.range)
+                        line.range, line.range);
 
 
-                    nodes[nodes.length-1].push(marker_symbol)
+                    nodes[nodes.length-1].push(markerSymbol);
 				}
             }
             resolve(symbols);
@@ -389,7 +389,7 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                         vscode.SymbolKind.Module,
                         "GoSub",
                        new vscode.Location(document.uri,line.range)
-                    ))
+                    ));
                 }
                 if (line.text.toLowerCase().startsWith("statement")) {
                     let stra: string[]=line.text.split(" ", 2);
@@ -399,7 +399,7 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                         vscode.SymbolKind.Method,
                         "Statement",
                        new vscode.Location(document.uri,line.range)
-                    ))
+                    ));
                 }
                 if (line.text.toLowerCase().startsWith("function")) {
                     let stra: string[]=line.text.split(" ", 2);
@@ -409,7 +409,7 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                         vscode.SymbolKind.Function,
                         "Function",
                        new vscode.Location(document.uri,line.range)
-                    ))
+                    ));
                 }
                 if (line.text.toLowerCase().startsWith("macro")) {
                     let stra: string[]=line.text.split(" ", 2);
@@ -419,7 +419,7 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                         vscode.SymbolKind.Function,
                         "Macro",
                        new vscode.Location(document.uri,line.range)
-                    ))
+                    ));
                 }
                 if (line.text.toLowerCase().startsWith("newtype")) {
                     let stra: string[]=line.text.split(" ", 2);
@@ -429,7 +429,7 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                         vscode.SymbolKind.Struct,
                         "Type",
                        new vscode.Location(document.uri,line.range)
-                    ))
+                    ));
                 }
             }
 
@@ -439,26 +439,26 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 }
 
 async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targetType:string) {
-    const settings = vscode.workspace.getConfiguration('AmigaBlitzBasic2')
+    const settings = vscode.workspace.getConfiguration('AmigaBlitzBasic2');
                        
     let file = getCurrentFile();
     if(file.length > 0)
     {
-        if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
+        if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders != undefined) {
 
             vscode.window.showInformationMessage('Building '+targetType+'...');
 
-            const folder=path.dirname(vscode.window.activeTextEditor.document.fileName)
-            const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName)
-            const currentSubfolder= file.substring(0,file.length-mainFile.length)
+            const folder=path.dirname(vscode.window.activeTextEditor.document.fileName);
+            const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName);
+            const currentSubfolder= file.substring(0,file.length-mainFile.length);
             const root = vscode.workspace.workspaceFolders[0];
             let dirBuild = root.uri.fsPath+"/"+currentSubfolder + 'build';
             if (!fs.existsSync(dirBuild)) {
                 fs.mkdirSync(dirBuild, 0o744);
             }
-            let packagingConfig:any=null
+            let packagingConfig:any=null;
             if (fs.existsSync(folder+"/packaging.json")) {
-                packagingConfig = JSON.parse(fs.readFileSync(folder+"/packaging.json", 'utf-8'))
+                packagingConfig = JSON.parse(fs.readFileSync(folder+"/packaging.json", 'utf-8'));
             }
             if (packagingConfig) {
                 for(const support of packagingConfig.supports) {
@@ -473,7 +473,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                         }
                         const adfPath=dirBuild+'/'+support.supportName+'.adf';            
                         
-                        var myArrayBuffer=fs.readFileSync(adfSrc).buffer
+                        var myArrayBuffer=fs.readFileSync(adfSrc).buffer;
                         adf.loadDisk(myArrayBuffer, function(success:any){
                             if (success){
                                 var info = adf.getInfo();
@@ -482,12 +482,12 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                                     adf.setDiskName(support.supportName);
                                     if (support.filesToIncludeOnRoot) {
                                         support.filesToIncludeOnRoot.forEach((fileToAdd:string) => {
-                                            uploadAdf(folder+"/"+fileToAdd,adf.rootSector,adf)
+                                            uploadAdf(folder+"/"+fileToAdd,adf.rootSector,adf);
                                         });  
                                     }
                                     if (support.foldersToInclude) {
                                         support.foldersToInclude.forEach((folderToAdd:string) => {
-                                            uploadFolder(folder,folderToAdd,adf.rootSector,adf)
+                                            uploadFolder(folder,folderToAdd,adf.rootSector,adf);
                                         });  
                                     }
 
@@ -495,24 +495,24 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                                     let startupSequence=fs.readFileSync(context.extensionPath+'/resources/packaging/startup-sequence','utf-8');
                                     startupSequence=startupSequence.replace('%exe%',support.exeToLaunch);
                                     fs.writeFileSync(dirBuild+'/startup-sequence',new Uint8Array(Buffer.from(startupSequence)),'utf-8');
-                                    uploadAdf(dirBuild+'/startup-sequence',sFolderSector,adf)
+                                    uploadAdf(dirBuild+'/startup-sequence',sFolderSector,adf);
 
                                     const libsFolderSector=adf.createFolder("Libs",adf.rootSector);
                                     if (support.includeDiskFontLibrary) {
-                                        uploadAdf(context.extensionPath+'/resources/packaging/diskfont.library',libsFolderSector,adf)
+                                        uploadAdf(context.extensionPath+'/resources/packaging/diskfont.library',libsFolderSector,adf);
                                     }
                                     if (support.includeMathTransLibrary) {
-                                        uploadAdf(context.extensionPath+'/resources/packaging/mathtrans.library',libsFolderSector,adf)
+                                        uploadAdf(context.extensionPath+'/resources/packaging/mathtrans.library',libsFolderSector,adf);
                                     }
 
                                     // Write target disk.
-                                    const outDisk=adf.getDisk()
+                                    const outDisk=adf.getDisk();
                                     // delete target if needed
                                     if (fs.existsSync(adfPath)) {
                                         fs.unlinkSync(adfPath);
                                     }
                                     var writeStream = fs.createWriteStream(adfPath);
-                                    writeStream.write(toBuffer(outDisk.buffer))
+                                    writeStream.write(toBuffer(outDisk.buffer));
                                     writeStream.end();
                                     vscode.window.showInformationMessage('ADF Ready for support : '+support.supportName+' !');
                                 }
@@ -540,7 +540,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                         }
                         if (support.foldersToInclude) {
                             support.foldersToInclude.forEach((folderToAdd:string) => {
-                                uploadFolderLocal(folder,folderToAdd,dirBuildZIPInside)
+                                uploadFolderLocal(folder,folderToAdd,dirBuildZIPInside);
                             });  
                         }
 
@@ -581,7 +581,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                         }
                         if (support.foldersToInclude) {
                             support.foldersToInclude.forEach((folderToAdd:string) => {
-                                uploadFolderLocal(folder,folderToAdd,dirBuildISO)
+                                uploadFolderLocal(folder,folderToAdd,dirBuildISO);
                             });  
                         }
 
@@ -613,7 +613,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
 
 
                         // Prepare Layout
-                        const isoPath=sharedFolder+currentSubfolder+"build/"+support.supportName+".iso"
+                        const isoPath=sharedFolder+currentSubfolder+"build/"+support.supportName+".iso";
 
                         replaceFile(context.extensionPath+'/resources/packaging/Layout',dirBuild+'/Layout'+support.type.toUpperCase());
                         let layout=fs.readFileSync(dirBuild+'/Layout'+support.type.toUpperCase(),'utf-8');
@@ -648,15 +648,15 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                             count: 1
                         };
                         
-                        listFolderForISO(dirBuildISO,isoDesc,1,{countFolder: 1},1)
+                        listFolderForISO(dirBuildISO,isoDesc,1,{countFolder: 1},1);
                         
                         // folder list
-                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder.replace('\\','/')+'build/iso-build-'+support.type.toUpperCase()+'\n'
-                        layout+=' 0001	<Root Dir>\n'
+                        layout+='000'+isoDesc.count+'	'+sharedFolder+currentSubfolder.replace('\\','/')+'build/iso-build-'+support.type.toUpperCase()+'\n';
+                        layout+=' 0001	<Root Dir>\n';
                         isoDesc.folders.forEach( (value,key) => { 
                             value.forEach(name => {
-                                layout+=' '+key.padStart(4,'0')+'	'+name+'\n'
-                            })
+                                layout+=' '+key.padStart(4,'0')+'	'+name+'\n';
+                            });
                         });
 
                         layout+='\n';
@@ -669,10 +669,10 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
 
                         isoDesc.elems.forEach( (elem) => { 
                             if (elem.type=='file') {
-                                layout+='F'+elem.folderRef.padStart(4,'0')+'	'+elem.name+'\n'
+                                layout+='F'+elem.folderRef.padStart(4,'0')+'	'+elem.name+'\n';
                             }
                             if (elem.type=='folder') {
-                                layout+='D'+elem.folderRef.padStart(4,'0')+'	'+elem.name+'\n'
+                                layout+='D'+elem.folderRef.padStart(4,'0')+'	'+elem.name+'\n';
                             }
                         });
 
@@ -701,7 +701,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                             client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
                             client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/Layout"+support.type.toUpperCase()+" RAM:\r\n");
                             client.write("RAM:\r\n");
-                            const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r\n"
+                            const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r\n";
                             console.log(command);
                             client.write(command); 
                         });
@@ -742,10 +742,10 @@ function uploadFolder(folderPath:string,folderName:string,sector:any,adfDisk:any
         const srcFile=folderPath+"/"+folderName+"/"+fileToAdd;
         const isDir = fs.existsSync(srcFile) && fs.lstatSync(srcFile).isDirectory();
         if (isDir) {
-            uploadFolder(folderPath+"/"+folderName,fileToAdd,folderSector,adfDisk)
+            uploadFolder(folderPath+"/"+folderName,fileToAdd,folderSector,adfDisk);
         } else {
             if (fileToAdd != ".DS_Store") {
-                uploadAdf(srcFile,folderSector,adfDisk)
+                uploadAdf(srcFile,folderSector,adfDisk);
             }
         }
     });
@@ -753,10 +753,10 @@ function uploadFolder(folderPath:string,folderName:string,sector:any,adfDisk:any
 
 function uploadAdf(srcFile:string,folderSector:any,adfDisk:any) {
     if (fs.existsSync(srcFile)) {
-        const bufferFile=new Uint8Array(fs.readFileSync(srcFile))
-        adfDisk.writeFile(path.basename(srcFile),bufferFile,folderSector)
+        const bufferFile=new Uint8Array(fs.readFileSync(srcFile));
+        adfDisk.writeFile(path.basename(srcFile),bufferFile,folderSector);
     } else {
-        console.log("Can't find file, skip.")
+        console.log("Can't find file, skip.");
     }
 }
 
@@ -812,7 +812,7 @@ function listFolderForISO(dest:string, isoDesc:  { folders: Map<string, [string]
 
             actions.push({
                 srcFile:srcFile,isoDesc:isoDesc,level:level+1,counter:counter,posFolder:counter.countFolder
-            })
+            });
             
         } else {
             let file:LayoutElem = {
