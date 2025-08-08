@@ -33,12 +33,12 @@
 				"AmigaBlitzBasic2.sharedFolder": {
 					"type": "string",
 					"default": "SharedCode",
-					"description": "Virtual harddrive volume name in UAE (if not present the `:` wil be added automatically). It the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match to your workspace path."
+					"description": "Virtual harddrive volume name in UAE (if not present the `:` wil be added automatically). It is the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match your workspace path."
 				},
 				"AmigaBlitzBasic2.UAECommandLine": {
 					"type": "string",
 					"default": "",
-					"description": "The full command line for running UAE, including config file and other parameters."
+					"description": "The full command line for launching UAE, including configuration file and other parameters."
 				},
 				"AmigaBlitzBasic2.UAELaunchDelay": {
 					"type": "number",
@@ -52,19 +52,19 @@
 				},
 				"AmigaBlitzBasic2.ISOCD": {
 					"type": "string",
-					"description": "Filepath for the ISOCD from the cd32 developerkit."
+					"description": "Filepath for the ISOCD from the cd32 developer kit."
 				},
 				"AmigaBlitzBasic2.CDTVTM": {
 					"type": "string",
-					"description": "Filepath for the CDTV.TM from the cdtv or cd32 developerkit."
+					"description": "Filepath for the CDTV.TM from the cdtv or cd32 developer kit."
 				},
 				"AmigaBlitzBasic2.CD32TM": {
 					"type": "string",
-					"description": "Filepath for the CD32.TM from the cd32 developerkit."
+					"description": "Filepath for the CD32.TM from the cd32 developer kit."
 				},
 				"AmigaBlitzBasic2.RMTM": {
 					"type": "string",
-					"description": "Filepath for the RMTM from the cdtv or cd32 developerkit."
+					"description": "Filepath for the RMTM from the cdtv or cd32 developer kit."
 				}
 			}
 		},
