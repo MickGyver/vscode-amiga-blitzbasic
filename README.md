@@ -306,7 +306,8 @@ Random couldn't open file error on Ted/Blitz2. (You can try an older version of 
 
 ## Release Notes
 ## 0.10.0
-- AmiBlitz 3.x support (through ARexx, command line support might be added later)
+- [Experimental] AmiBlitz 3.x support (through ARexx, command line support might be added later)
+- Fixed bug that broke commands in version 0.9.5
 ## 0.9.5
 - Option to launch UAE automatically. You need to give a full command line for launching UAE in the extension settings. See above for details. 
 ## 0.9.1

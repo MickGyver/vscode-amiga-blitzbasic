@@ -1,8 +1,9 @@
 # Change Log
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
-## [0.10.0 ] - 2025-08-08
-- AmiBlitz 3.x support (through ARexx, command line support might be added later)
+## [0.10.0 ] - 2025-08-12
+- [Experimental] AmiBlitz 3.x support (through ARexx, command line support might be added later)
+- Fixed bug that broke commands in version 0.9.5
 ## [0.9.5 ] - 2025-08-08
 - Option to launch UAE automatically. You need to give a full command line for launching UAE in the extension settings. See the readme for details. 
 ## [0.9.1 ] - 2023-04-23

@@ -2,7 +2,7 @@
 
 ## What's in the folder
 
-* This folder contains all of the files necessary for your extension.
+* This folder contains all of the files necessary for your extension. If this folder has been cloned from a GIT repository, you might need to run the command **npm install** (in the extension root folder) to install all node.js dependencies. 
 * `package.json` - this is the manifest file in which you declare your extension and command.
   * The sample plugin registers a command and defines its title and command name. With this information VS Code can show the command in the command palette. It doesn’t yet need to load the plugin.
 * `src/extension.ts` - this is the main file where you will provide the implementation of your command.
