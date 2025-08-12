@@ -33,10 +33,13 @@
 				"AmigaBlitzBasic2.blitzType": {
 					"type": "string",
 					"default": "BB2",
-					"enum": ["BB2", "AB3"],
+					"enum": [
+						"BB2",
+						"AB3"
+					],
 					"enumDescriptions": [
-					  "Blitz Basic 2 - SuperTed",
-					  "AmiBlitz 3.x"
+						"Blitz Basic 2 - SuperTed",
+						"AmiBlitz 3.x"
 					],
 					"description": "Which Blitz do you use, AmiBlitz 3.x or Blitz Basic 2?"
 				},
@@ -204,7 +207,7 @@
 	"dependencies": {
 		"@types/xml2js": "^0.4.11",
 		"natural-compare-lite": "^1.4.0",
-		"xml2js": "^0.4.23",
+		"xml2js": "^0.6.2",
 		"zip-a-folder": "^1.1.5"
 	}
 }
