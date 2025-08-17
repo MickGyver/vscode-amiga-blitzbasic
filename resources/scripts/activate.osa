@@ -1,0 +1,8 @@
+#!/usr/bin/env osascript
+
+# Activates (brings window to front) the specified application.
+# $1 - name of the app to activate
+
+on run argv
+tell application (item 1 of argv) to activate first window
+end run

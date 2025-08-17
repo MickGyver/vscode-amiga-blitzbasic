@@ -86,6 +86,11 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
+    let copybuildtools = vscode.commands.registerCommand('amiga-blitzbasic2.copybuildtools', () => {
+        copyBuildTools(context,settings,sharedFolder);
+	});
+	context.subscriptions.push(copybuildtools);
+
 	let runuae = vscode.commands.registerCommand('amiga-blitzbasic2.runuae', () => {
         runAndLoadInUAE(context,settings,sharedFolder,false,true);
 	});
@@ -120,12 +125,139 @@ export function activate(context: vscode.ExtensionContext) {
             new ABB2DocumentSymbolProvider()
         )
     );
+
+    if(isVersionUpdate(context)) {
+        const resp = vscode.window.showInformationMessage(
+            "AMIGA BLITZ BASIC 2 has been updated. Be sure to copy/update the build tools once you have your UAE / Amiga OS setup up and running. Read more in the README.",
+            "OK!"
+        );
+    }
+
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
 
+function isVersionUpdate(context: vscode.ExtensionContext): boolean {
+    const splitVersion = (input: string): {major: number; minor: number; patch: number} => {
+      const [major, minor, patch] = input.split('.').map(i => parseInt(i, 10));
+      return {major, minor, patch};
+    };
 
+    let pathUser:string = context.extensionPath + "/user_config.json";
+    let pathPackage:string = context.extensionPath + "/package.json";
+
+    let userData = {"version": "0.1.0"};
+    if (fs.existsSync(pathUser)) {
+        let fileRead = fs.readFileSync(pathUser, 'utf-8');
+        userData = JSON.parse(fileRead);
+    } 
+    if (fs.existsSync(pathPackage)) {
+        let packageRead = fs.readFileSync(pathPackage, 'utf-8');
+        let packageData = JSON.parse(packageRead);
+
+        const versionCurrent = splitVersion(packageData.version);
+        const versionOld = splitVersion(userData.version);
+
+        const update = (
+        versionCurrent.major > versionOld.major ||
+        versionCurrent.minor > versionOld.minor ||
+        versionCurrent.patch > versionOld.patch
+        );
+
+        if(update)
+        {
+            userData.version = packageData.version;
+            let jsonData = JSON.stringify(userData);
+            fs.writeFileSync(pathUser, jsonData, 'utf-8');
+        }
+
+        return update;
+    }
+
+    return false;
+  }
+
+function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.WorkspaceConfiguration,sharedFolder:string) {
+    console.log("Copying build tools...");
+    if (vscode.workspace.workspaceFolders !== undefined) {
+        const folder=vscode.workspace.workspaceFolders[0].uri.fsPath;
+        let dir = folder + '/.buildtools';
+        console.log(dir);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, 0o744);
+        }
+        if (settings.blitzType==='BB2') {
+            replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2.rexx',dir+'/blitzbasic2.rexx');
+            replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2-open.rexx',dir+'/blitzbasic2-open.rexx');
+            replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway');
+            replaceFile(context.extensionPath + '/resources/amiga/BB2XtraEditor',dir+'/BB2XtraEditor');
+        }
+        else {
+            replaceFile(context.extensionPath + '/resources/amiga/amiblitz3.rexx',dir+'/amiblitz3.rexx');
+            replaceFile(context.extensionPath + '/resources/amiga/amiblitz3-open.rexx',dir+'/amiblitz3-open.rexx');
+        }
+
+        var client  = new net.Socket();
+        client.setEncoding("ascii");
+
+        const connect = () => { client.connect({ port: settings.UAEPort }); };
+
+        client.once('connect', function() {
+            console.log('Connected to UAE!');
+        });
+        
+        let outData:string = "";
+        client.on('connect',function(){
+            console.log('Client: connection established with server');
+            client.write("\r"); // to avoid bug
+            
+            if (settings.blitzType==='BB2') {
+                client.write('copy "'+sharedFolder+'.buildtools/blitzbasic2.rexx" S:\r');
+                client.write('copy "'+sharedFolder+'.buildtools/blitzbasic2-open.rexx" S:\r');
+                client.write('copy "'+sharedFolder+'.buildtools/BB2NagAway" C:\r');
+                client.write('copy "'+sharedFolder+'.buildtools/BB2XtraEditor" C:\r');
+            }
+            else {
+                client.write('copy "'+sharedFolder+'.buildtools/amiblitz3.rexx" S:\r');
+                client.write('copy "'+sharedFolder+'.buildtools/amiblitz3-open.rexx" S:\r');
+            }
+
+            setTimeout(function(){
+                console.log("Client disconnecting, data received: " + outData);
+                client.end('Bye bye server');
+            },1000);
+
+            vscode.window.showInformationMessage('Build tools copied!');
+        });
+
+        let retried:boolean = false;
+        client.on('error', function(e:any) {
+            if(e.code === 'ECONNREFUSED') {
+                if(!retried) {
+                    console.log('Connection to UAE failed! Starting UAE...');
+                    if(settings.UAECommandLine.length > 0) {
+                        exec(settings.UAECommandLine, (error, stdout, stderr) => {});
+                        setTimeout(connect,settings.UAELaunchDelay*1000);
+                    }
+                    retried = true;
+                }
+                else {
+                    vscode.window.showInformationMessage('Failed to copy build tools! Ensure that UAE is running and correctly configured.');
+                }
+            }
+        });
+
+        connect();
+        
+        client.setEncoding('utf8');
+        
+        client.on('data',function(data:any){
+            outData+=data;
+        });
+
+    }
+}
 
 function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.WorkspaceConfiguration,sharedFolder:string,all:boolean,run:boolean) {
     let file = getCurrentFile();
@@ -191,26 +323,24 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     arexxFile='amiblitz3';
                 }
 
-                if (run) {
-                    replaceFile(context.extensionPath + '/resources/amiga/'+arexxFile+'.rexx',dir+'/'+arexxFile+'.rexx'); 
-                }
-                else {
-                    replaceFile(context.extensionPath + '/resources/amiga/'+arexxFile+'-open.rexx',dir+'/'+arexxFile+'-open.rexx'); 
-                }
-                if (settings.blitzType==='BB2') {
-                    replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway'); 
-                }
-
                 console.log('Connecting in TCP (AUX:) to UAE');
 
                 let command:string;
                 if (run) {
-                 command='rx S:'+arexxFile+'.rexx ';
+                 command='rx S:'+arexxFile+'.rexx';
                 }
                 else {
-                    command='rx S:'+arexxFile+'-open.rexx ';
+                    command='rx S:'+arexxFile+'-open.rexx';
                 }
                 if (settings.blitzType==='BB2') {
+                    if(settings.SetCompilerOptions) {
+                        let xtra:string = "";
+                        settings.CreateIcons ? xtra+="I" : xtra+="i";
+                        settings.RuntimeErrorDebugger ? xtra+="E" : xtra+="e";
+                        settings.MakeSmallestCode ? xtra+="S" : xtra+="s";
+                        settings.CreateDebugInfo ? xtra+="D" : xtra+="d";
+                        command += " co="+xtra; 
+                    }
                     command+=" \""+sharedFolder+file.replace('.bba','.bb2').replace('\\','/')+"\"";
                 } else {
                     command+=" \""+sharedFolder+file.replace('\\','/')+"\"";
@@ -218,11 +348,12 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 includes.forEach((include) => {
                     command+=" \""+include.replace('\\','/')+"\"";
                 });
-                command+="\r\n";
+                command+="\r";
 
                 console.log(command);
             
                 var client  = new net.Socket();
+                client.setEncoding("ascii");
 
                 const connect = () => { client.connect({ port: settings.UAEPort }); };
 
@@ -233,22 +364,14 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 let outData:string = "";
                 client.on('connect',function(){
                     console.log('Client: connection established with server');
-                    client.write("\r\n"); // to avoid bug
+                    activateEmulator(context, settings); // Bring the emulator to the front
+                    client.write("\r"); // to avoid bug
                     // writing data to server
-                    if (run) {
-                        client.write('copy "'+sharedFolder+currentSubfolder.replace('\\','/')+'build/'+arexxFile+'.rexx" S:\r\n'); //To avoid when things goes wrong on the amiga
-                    }
-                    else {
-                        client.write('copy "'+sharedFolder+currentSubfolder.replace('\\','/')+'build/'+arexxFile+'-open.rexx" S:\r\n');
-                    }
-                    if (settings.blitzType==='BB2') {
-                        client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/BB2NagAway C:\r\n"); 
-                    }
                     client.write(command);
 
                     setTimeout(function(){
                         console.log("Client disconnecting, data received: " + outData);
-                        client.end('Bye bye server');
+                        client.end();
                     },1000);
 
                 });
@@ -278,6 +401,38 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
             }
         }
     }
+}
+
+function activateEmulator(context: vscode.ExtensionContext, settings:vscode.WorkspaceConfiguration) : boolean {
+	let command:string = "";
+	switch (process.platform) {
+	case "darwin":
+		command = "osascript \"" + context.extensionPath + "/resources/scripts/activate.osa" + "\" " + "fs-uae";
+		break;
+	case "linux":
+		command = "\"" + context.extensionPath + "/resources//scripts/activate.sh" + "\" " + "fs-uae";
+		break;
+	case "win32":
+		command = "cscript //nologo \"" + context.extensionPath + "\\resources\\scripts\\activate.vbs" + "\" ";
+        if(settings.UAECommandLine.toLowerCase().indexOf("fs-uae") >= 0) {
+            command += "fs-uae.exe";
+        }
+        else {
+            command += "winuae.exe winuae64.exe";
+        }
+		break;
+	}
+    console.log(command);
+    let activated:boolean = true;
+	if (command !== "") {
+		exec(command, (error, stdout, stderr) => {
+			if (error) {
+				console.log("Problem activating the emulator!");
+                activated = false;
+			}
+		});
+	}
+    return activated;
 }
 
 function getCurrentFile() : string {
@@ -327,16 +482,20 @@ class ABB2DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
                 let tokens = line.text.split(" ");
 
-				if(line.text.endsWith(":"))
+				if(line.text.endsWith(":") && !line.text.trim().startsWith(";"))
 				{
-					let markerSymbol = new vscode.DocumentSymbol(
-                        tokens[0].substring(0,tokens[0].length-1),
-                        '',
-                        vscode.SymbolKind.Enum,
-                        line.range, line.range);
+                    try {
+                        let markerSymbol = new vscode.DocumentSymbol(
+                            tokens[0].substring(0,tokens[0].length-1),
+                            '',
+                            vscode.SymbolKind.Enum,
+                            line.range, line.range);
 
 
-                    nodes[nodes.length-1].push(markerSymbol);
+                        nodes[nodes.length-1].push(markerSymbol);
+                    }
+                    catch(error)
+                    { }
 				}
 				else if(line.text.startsWith("."))
 				{
@@ -414,45 +573,48 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                        new vscode.Location(document.uri,line.range)
                     ));
                 }
-                if (line.text.toLowerCase().startsWith("statement")) {
-                    let stra: string[]=line.text.split(" ", 2);
-                    let strb: string[]=stra[1].split("{", 1);
-                    symbols.push(new vscode.SymbolInformation(
-                        strb[0],
-                        vscode.SymbolKind.Method,
-                        "Statement",
-                       new vscode.Location(document.uri,line.range)
-                    ));
-                }
-                if (line.text.toLowerCase().startsWith("function")) {
-                    let stra: string[]=line.text.split(" ", 2);
-                    let strb: string[]=stra[1].split("{", 1);
-                    symbols.push(new vscode.SymbolInformation(
-                        strb[0],
-                        vscode.SymbolKind.Function,
-                        "Function",
-                       new vscode.Location(document.uri,line.range)
-                    ));
-                }
-                if (line.text.toLowerCase().startsWith("macro")) {
-                    let stra: string[]=line.text.split(" ", 2);
-                    let strb: string[]=stra[1].split("{", 1);
-                    symbols.push(new vscode.SymbolInformation(
-                        strb[0],
-                        vscode.SymbolKind.Function,
-                        "Macro",
-                       new vscode.Location(document.uri,line.range)
-                    ));
-                }
-                if (line.text.toLowerCase().startsWith("newtype")) {
-                    let stra: string[]=line.text.split(" ", 2);
-                    let strb: string[]=stra[1].split(".", 2);
-                    symbols.push(new vscode.SymbolInformation(
-                        strb[1],
-                        vscode.SymbolKind.Struct,
-                        "Type",
-                       new vscode.Location(document.uri,line.range)
-                    ));
+                if(!line.text.trim().endsWith(":"))
+                {
+                    if (line.text.toLowerCase().startsWith("statement")) {
+                        let stra: string[]=line.text.split(" ", 2);
+                        let strb: string[]=stra[1].split("{", 1);
+                        symbols.push(new vscode.SymbolInformation(
+                            strb[0],
+                            vscode.SymbolKind.Method,
+                            "Statement",
+                        new vscode.Location(document.uri,line.range)
+                        ));
+                    }
+                    if (line.text.toLowerCase().startsWith("function")) {
+                        let stra: string[]=line.text.split(" ", 2);
+                        let strb: string[]=stra[1].split("{", 1);
+                        symbols.push(new vscode.SymbolInformation(
+                            strb[0],
+                            vscode.SymbolKind.Function,
+                            "Function",
+                        new vscode.Location(document.uri,line.range)
+                        ));
+                    }
+                    if (line.text.toLowerCase().startsWith("macro")) {
+                        let stra: string[]=line.text.split(" ", 2);
+                        let strb: string[]=stra[1].split("{", 1);
+                        symbols.push(new vscode.SymbolInformation(
+                            strb[0],
+                            vscode.SymbolKind.Function,
+                            "Macro",
+                        new vscode.Location(document.uri,line.range)
+                        ));
+                    }
+                    if (line.text.toLowerCase().startsWith("newtype")) {
+                        let stra: string[]=line.text.split(" ", 2);
+                        let strb: string[]=stra[1].split(".", 2);
+                        symbols.push(new vscode.SymbolInformation(
+                            strb[1],
+                            vscode.SymbolKind.Struct,
+                            "Type",
+                        new vscode.Location(document.uri,line.range)
+                        ));
+                    }
                 }
             }
 
@@ -708,9 +870,7 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                         }
 
                         var client  = new net.Socket();
-
-
-                        client.setEncoding('utf8');
+                        client.setEncoding('ascii');
                         
                         client.on('data',function(data:any){
                             console.log(data);
@@ -718,13 +878,13 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
 
                         client.on('connect',function(){
                             console.log('Client: connection established with server');
-                            client.write("\r\n"); // to avoid bug
+                            client.write("\r"); // to avoid bug
                             // writing data to server
-                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/isocd RAM:\r\n"); 
-                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r\n"); 
-                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/Layout"+support.type.toUpperCase()+" RAM:\r\n");
-                            client.write("RAM:\r\n");
-                            const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r\n";
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/isocd RAM:\r"); 
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/iso-build-"+support.type.toUpperCase()+"/"+support.type.toUpperCase()+".TM RAM:\r"); 
+                            client.write("copy "+sharedFolder+currentSubfolder.replace('\\','/')+"build/Layout"+support.type.toUpperCase()+" RAM:\r");
+                            client.write("RAM:\r");
+                            const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r";
                             console.log(command);
                             client.write(command); 
                         });

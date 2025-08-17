@@ -1,6 +1,14 @@
 # Change Log
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
+## [0.11.0 ] - 2025-08-16
+- Build tools for Amiga OS needs to be copied (once per shared folder / Blitz type) using a command (Ctrl/Cmd+Shift+P) instead of automatically being copied at every build process.
+- Option to set compiler options automatically as part of the build process (BB2).
+- UAE is brought to focus at compile/run (some actions are needed to get this to work on Linux). This implementation is based on amishell.
+- Fixed some bugs that could cause the 'outline' and 'go to symbol' functions to fail.
+- The line 'serial_translate=crlf_cr' in the WinUAE configuration file should not be needed any more, but it being there doesn't hurt.
+- Node.js dependencies updated to remove vulnerabilities.
+- Extension settings are now grouped.
 ## [0.10.0 ] - 2025-08-12
 - [Experimental] AmiBlitz 3.x support (through ARexx, command line support might be added later)
 - Fixed bug that broke commands in version 0.9.5

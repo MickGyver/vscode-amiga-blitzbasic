@@ -8,7 +8,7 @@
 		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.10.0",
+	"version": "0.11.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -27,61 +27,111 @@
 			"hoverProvider": "true",
 			"documentSymbolProvider": "true"
 		},
-		"configuration": {
-			"title": "Amiga Blitz Basic 2",
-			"properties": {
-				"AmigaBlitzBasic2.blitzType": {
-					"type": "string",
-					"default": "BB2",
-					"enum": [
-						"BB2",
-						"AB3"
-					],
-					"enumDescriptions": [
-						"Blitz Basic 2 - SuperTed",
-						"AmiBlitz 3.x"
-					],
-					"description": "Which Blitz do you use, AmiBlitz 3.x or Blitz Basic 2?"
-				},
-				"AmigaBlitzBasic2.sharedFolder": {
-					"type": "string",
-					"default": "SharedCode",
-					"description": "Virtual harddrive volume name in UAE (if not present the `:` wil be added automatically). It is the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match your workspace path."
-				},
-				"AmigaBlitzBasic2.UAECommandLine": {
-					"type": "string",
-					"default": "",
-					"description": "The full command line for launching UAE, including configuration file and other parameters."
-				},
-				"AmigaBlitzBasic2.UAELaunchDelay": {
-					"type": "number",
-					"default": 7,
-					"description": "Number of seconds to wait for Amiga OS to launch in UAE."
-				},
-				"AmigaBlitzBasic2.UAEPort": {
-					"type": "number",
-					"default": 1234,
-					"description": "UAE serial direct connection port for AUX: mount."
-				},
-				"AmigaBlitzBasic2.ISOCD": {
-					"type": "string",
-					"description": "Filepath for the ISOCD from the cd32 developer kit."
-				},
-				"AmigaBlitzBasic2.CDTVTM": {
-					"type": "string",
-					"description": "Filepath for the CDTV.TM from the cdtv or cd32 developer kit."
-				},
-				"AmigaBlitzBasic2.CD32TM": {
-					"type": "string",
-					"description": "Filepath for the CD32.TM from the cd32 developer kit."
-				},
-				"AmigaBlitzBasic2.RMTM": {
-					"type": "string",
-					"description": "Filepath for the RMTM from the cdtv or cd32 developer kit."
+		"configuration": [
+			{
+				"type": "object",
+				"title": "Common Settings",
+				"properties": {
+					"AmigaBlitzBasic2.blitzType": {
+						"type": "string",
+						"default": "BB2",
+						"enum": [
+							"BB2",
+							"AB3"
+						],
+						"enumDescriptions": [
+							"Blitz Basic 2 - SuperTed",
+							"AmiBlitz 3.x"
+						],
+						"description": "Which Blitz do you use, AmiBlitz 3.x or Blitz Basic 2?"
+					},
+					"AmigaBlitzBasic2.sharedFolder": {
+						"type": "string",
+						"default": "SharedCode",
+						"description": "Virtual harddrive volume name in UAE (if not present the `:` wil be added automatically). It is the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match your workspace path."
+					},
+					"AmigaBlitzBasic2.SetCompilerOptions": {
+						"type": "boolean",
+						"default": false,
+						"description": "Set compiler options, as part of the compile process, for the main source file. This only concerns Blitz Basic 2 source files, Amiblitz store compiler options directly in the source file(s). You can specify the compiler options in the settings group named 'Compiler Options'."
+					}
+				}
+			},
+			{
+				"type": "object",
+				"title": "UAE",
+				"properties": {
+						"AmigaBlitzBasic2.UAECommandLine": {
+						"type": "string",
+						"default": "",
+						"description": "The full command line for launching UAE, including configuration file and other parameters."
+					},
+					"AmigaBlitzBasic2.UAELaunchDelay": {
+						"type": "number",
+						"default": 7,
+						"description": "Number of seconds to wait for Amiga OS to launch in UAE."
+					},
+					"AmigaBlitzBasic2.UAEPort": {
+						"type": "number",
+						"default": 1234,
+						"description": "UAE serial direct connection port for AUX: mount."
+					}
+				}
+			},
+			{
+				"type": "object",
+				"title": "Compiler Options",
+				"properties": {
+					"AmigaBlitzBasic2.CreateIcons": {
+						"type": "boolean",
+						"default": true,
+						"description": "Create icons for executable files"
+					},
+					"AmigaBlitzBasic2.RuntimeErrorDebugger": {
+						"type": "boolean",
+						"default": false,
+						"description": "Enable the runtime error debugger"
+					},
+					"AmigaBlitzBasic2.MakeSmallestCode": {
+						"type": "boolean",
+						"default": true,
+						"description": "Enable the option to make the smallest code"
+					},
+					"AmigaBlitzBasic2.CreateDebugInfo": {
+						"type": "boolean",
+						"default": false,
+						"description": "Create debug info for executable files"
+					}
+				}
+			},
+			{
+				"type": "object",
+				"title": "Packaging",
+				"properties": {
+					"AmigaBlitzBasic2.ISOCD": {
+						"type": "string",
+						"description": "Filepath for the ISOCD from the cd32 developer kit."
+					},
+					"AmigaBlitzBasic2.CDTVTM": {
+						"type": "string",
+						"description": "Filepath for the CDTV.TM from the cdtv or cd32 developer kit."
+					},
+					"AmigaBlitzBasic2.CD32TM": {
+						"type": "string",
+						"description": "Filepath for the CD32.TM from the cd32 developer kit."
+					},
+					"AmigaBlitzBasic2.RMTM": {
+						"type": "string",
+						"description": "Filepath for the RMTM from the cdtv or cd32 developer kit."
+					}
 				}
 			}
-		},
+		],
 		"commands": [
+			{
+				"command": "amiga-blitzbasic2.copybuildtools",
+				"title": "BB2: Copy build tools to Amiga OS / UAE"
+			},
 			{
 				"command": "amiga-blitzbasic2.runuae",
 				"title": "BB2: Run current file in UAE"

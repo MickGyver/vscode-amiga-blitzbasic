@@ -6,15 +6,22 @@ bb2exe = 'Blitz2:Blitz2'
 /* Get all command line parameters */
 PARSE ARG commandline
 count = 0
+xtraFlags = ''
 DO WHILE LENGTH( commandline ) > 0
-   commandline = STRIP( commandline, 'B' )
-   count = count + 1
-   IF LEFT( commandline, 1 ) = '"' THEN DO
-      PARSE VAR commandline '"'parameter.count'"' commandline
-   END
-   ELSE DO
-      PARSE VAR commandline parameter.count commandline
-   END
+	commandline = STRIP( commandline, 'B' )
+	IF LEFT(commandline, 3) = 'co=' THEN DO
+		PARSE VAR commandline xtraFlags commandline
+		xtraFlags = RIGHT(xtraFlags, 4)
+	END
+	ELSE DO
+		count = count + 1
+		IF LEFT( commandline, 1 ) = '"' THEN DO
+			PARSE VAR commandline '"'parameter.count'"' commandline
+		END
+		ELSE DO
+			PARSE VAR commandline parameter.count commandline
+		END
+	END
 END
 parameter.0 = count
 DROP commandline
@@ -51,6 +58,11 @@ ACTIVATE
 DO counter = 2 TO parameter.0
    LOAD parameter.counter
    SAVE
+END
+
+/* Set compiler options */
+IF LENGTH(xtraFlags) > 0 THEN DO
+	ADDRESS COMMAND 'Run >NIL: BB2XtraEditor '||parameter.1||'.xtra '||xtraFlags
 END
 
 /* Load the main project file (first command line parameter) */

@@ -3,3 +3,4 @@ node_modules
 out/*
 .DS_Store
 .vscode/*
+user_config.json
