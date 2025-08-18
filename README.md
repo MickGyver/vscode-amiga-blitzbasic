@@ -224,33 +224,33 @@ Each support entry (multi disk and multi support) support the following paramete
 
 ## Requirements
 
-You will need to configure UAE and Amiga OS:
+You will need to install and configure UAE and Amiga OS:
 
-1. Install Amiga OS (3.x) and Blitz Basic 2 or AmiBlitz 3.x if you haven't already done so. You can get an updated installation package (that includes an updated pdf manual) for Blitz Basic 2 [here](http://ubb.plus/).
+1. Install WinUAE (version 5.3.10 or older) or FS-UAE (Windows, MacOS, Linux).
 
-1. Ensure that AREXX is started with WorkBench. The line:
+2. Install Amiga OS (3.x) and Blitz Basic 2 or AmiBlitz 3.x. You can get an updated installation package (that includes an updated pdf manual) for Blitz Basic 2 [here](http://ubb.plus/).
 
+3. Ensure that AREXX is started with WorkBench. The line:
     ```
     SYS:System/RexxMast >NIL:
     ```
-
     should exist in either S/startup-sequence or S/user-startup. If not, add it to the end of
     user-startup.
    
-2. In WinUae set serial port to TCP://0.0.0.0:1234 and select "Direct" below the drop down box (Settings
-    / Host / IO ports). Deselect any other options for the serial port. Save the WinUAE configuration and
-    quit WinUAE. Open the configuration file in a text editor and add the following to the configuration
-    file manually (under the other lines concerning serial):
-
+4. **WinUAE**: set serial port to TCP://0.0.0.0:1234 and select "Direct" below the drop down box (Settings / Host / IO ports). Deselect any other options for the serial port. Save the WinUAE configuration and quit WinUAE. Open the configuration file in a text editor and add the following to the configuration file manually (under the other lines concerning serial):
+    ```
     serial_translate=crlf_cr
-
+    ```
     *For version 0.11.0 (and above) the serial_translate line should not be needed*.
    
     NOTE: You need to ensure that your firewall/antivirus allows network traffic for WinUAE.
-   
-3. Create the file DEVS:MountList on the virtual harddrive with the following content (if it does not
-    already exist)
 
+    **FS-UAE**: In the tab 'Additional Configuration', click the gear icon to open the Custom Configuration window. Add the line:
+    ```
+    serial_port = tcp://127.0.0.1:1234
+    ```
+   
+5. Create the file DEVS:MountList on the virtual harddrive with the following content (if it does not already exist):
     ```   
     AUX:
     Handler = L:Aux-Handler
@@ -258,21 +258,19 @@ You will need to configure UAE and Amiga OS:
     Priority = 5
     ```
 
-4. Add the following commands to the end of S:user-startup
-
+6. Add the following commands to the end of S:user-startup
     ```    
     mount aux:
     newshell aux:
     ```  
 
-5. Add a virtual hard disk pointing to the folder containing your Blitz Basic 2 or AmiBlitz 3 projects (this folder can have sub folders with code).
+7. Add a virtual hard disk pointing to the folder containing your Blitz Basic 2 or AmiBlitz 3 projects (this folder can have sub folders with code).
  
     This same folder must be your Visual Studio Code workspace folder.
 
-    The device name and volume label of the virtual harddrive must match the "Shared Folder" setting for this extension. By default,
-    the folder is named **SharedCode** but you can change this in the settings for the extension (on user or workspace level).
+    The device name and volume label of the virtual harddrive must match the "Shared Folder" setting for this extension. By default, the folder is named **SharedCode** but you can change this in the settings for the extension (on user or workspace level).
 
-6. For AmiBlitz, you must create an AmiBlitz: assign in your user-startup, similar to the Blitz: assign that is created automatically during installation of Blitz Basic 2. The assign must point to your Amiblitz installation folder. Like this (AmiBlitz installed in the DH0:Apps folder):
+8. For AmiBlitz, you must create an AmiBlitz: assign in your user-startup, similar to the Blitz: assign that is created automatically during installation of Blitz Basic 2. The assign must point to your Amiblitz installation folder. Like this (AmiBlitz installed in the DH0:Apps folder):
 
     ```
     ASSIGN AmiBlitz: DH0:Apps/AmiBlitz

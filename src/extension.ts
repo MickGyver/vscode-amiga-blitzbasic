@@ -199,12 +199,12 @@ function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.Workspa
         }
 
         var client  = new net.Socket();
-        client.setEncoding("ascii");
 
         const connect = () => { client.connect({ port: settings.UAEPort }); };
 
         client.once('connect', function() {
             console.log('Connected to UAE!');
+            client.setEncoding("ascii");
         });
         
         let outData:string = "";
@@ -225,7 +225,7 @@ function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.Workspa
 
             setTimeout(function(){
                 console.log("Client disconnecting, data received: " + outData);
-                client.end('Bye bye server');
+                client.end();
             },1000);
 
             vscode.window.showInformationMessage('Build tools copied!');
@@ -249,8 +249,6 @@ function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.Workspa
         });
 
         connect();
-        
-        client.setEncoding('utf8');
         
         client.on('data',function(data:any){
             outData+=data;
@@ -353,12 +351,12 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 console.log(command);
             
                 var client  = new net.Socket();
-                client.setEncoding("ascii");
 
                 const connect = () => { client.connect({ port: settings.UAEPort }); };
 
                 client.once('connect', function() {
                     console.log('Connected to UAE!');
+                    client.setEncoding("ascii");
                 });
                 
                 let outData:string = "";
@@ -391,8 +389,6 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 });
 
                 connect();
-                
-                client.setEncoding('utf8');
                 
                 client.on('data',function(data:any){
                     outData+=data;
