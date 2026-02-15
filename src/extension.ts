@@ -9,7 +9,7 @@ var net = require('net');
 import { zip, COMPRESSION_LEVEL } from 'zip-a-folder';
 import Adf from './adfFS';
 import { stringify } from 'querystring';
-import {exec} from 'child_process';
+import {exec, execSync} from 'child_process';
 
 
 
@@ -27,6 +27,11 @@ export function activate(context: vscode.ExtensionContext) {
     let sharedFolder =settings.sharedFolder;
     if (sharedFolder.substring(sharedFolder.length-1,sharedFolder.length)) {
         sharedFolder+=':';
+    }
+
+    let assignFolder =settings.Assign;
+    if (assignFolder.substring(assignFolder.length-1,assignFolder.length)) {
+        assignFolder+=':';
     }
 
     if (settings.blitzType==="AB3") {
@@ -87,24 +92,44 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
     let copybuildtools = vscode.commands.registerCommand('amiga-blitzbasic2.copybuildtools', () => {
-        copyBuildTools(context,settings,sharedFolder);
+        copyBuildTools(context,settings,sharedFolder, false);
 	});
 	context.subscriptions.push(copybuildtools);
+    
+    let copybuildtoolsamiga = vscode.commands.registerCommand('amiga-blitzbasic2.copybuildtoolsamiga', () => {
+        copyBuildTools(context,settings,assignFolder,true);
+	});
+	context.subscriptions.push(copybuildtoolsamiga);
 
 	let runuae = vscode.commands.registerCommand('amiga-blitzbasic2.runuae', () => {
-        runAndLoadInUAE(context,settings,sharedFolder,false,true);
+        runAndLoad(context,settings,sharedFolder,false,true,false);
 	});
 	context.subscriptions.push(runuae);
 
     let openalluae = vscode.commands.registerCommand('amiga-blitzbasic2.openalluae', () => {
-        runAndLoadInUAE(context,settings,sharedFolder,true,false);
+        runAndLoad(context,settings,sharedFolder,true,false,false);
 	});
 	context.subscriptions.push(openalluae);
 
     let runalluae = vscode.commands.registerCommand('amiga-blitzbasic2.runalluae', () => {
-        runAndLoadInUAE(context,settings,sharedFolder,true,true);
+        runAndLoad(context,settings,sharedFolder,true,true,false);
 	});
 	context.subscriptions.push(runalluae);
+
+    let runamiga = vscode.commands.registerCommand('amiga-blitzbasic2.runamiga', () => {
+        runAndLoad(context,settings,assignFolder,false,true,true);
+	});
+	context.subscriptions.push(runamiga);
+
+    let openallamiga = vscode.commands.registerCommand('amiga-blitzbasic2.openallamiga', () => {
+        runAndLoad(context,settings,assignFolder,true,false,true);
+	});
+	context.subscriptions.push(openallamiga);
+
+    let runallamiga = vscode.commands.registerCommand('amiga-blitzbasic2.runallamiga', () => {
+        runAndLoad(context,settings,assignFolder,true,true,true);
+	});
+	context.subscriptions.push(runallamiga);
 
     let buildADFCommand = vscode.commands.registerCommand('amiga-blitzbasic2.buildADF', () => {
         buildSupport(context,sharedFolder,'ADF');
@@ -178,7 +203,8 @@ function isVersionUpdate(context: vscode.ExtensionContext): boolean {
     return false;
   }
 
-function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.WorkspaceConfiguration,sharedFolder:string) {
+function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.WorkspaceConfiguration,sharedFolder:string,amiga:boolean) {
+    // TODO: Add Real Amiga support, use execSync
     console.log("Copying build tools...");
     if (vscode.workspace.workspaceFolders !== undefined) {
         const folder=vscode.workspace.workspaceFolders[0].uri.fsPath;
@@ -223,6 +249,8 @@ function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.Workspa
                 client.write('copy "'+sharedFolder+'.buildtools/amiblitz3-open.rexx" S:\r');
             }
 
+            //client.write('RequestChoice >NIL: TITLE "VS Code" BODY "Build Tools Copied!" GADGETS OK\r');
+
             setTimeout(function(){
                 console.log("Client disconnecting, data received: " + outData);
                 client.end();
@@ -257,21 +285,36 @@ function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.Workspa
     }
 }
 
-function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.WorkspaceConfiguration,sharedFolder:string,all:boolean,run:boolean) {
+function runAndLoad(context: vscode.ExtensionContext,settings:vscode.WorkspaceConfiguration,sharedFolder:string,all:boolean,run:boolean,amiga:boolean) {
     let file = getCurrentFile();
     if(file.length > 0)
     {
         if (run && !all)
         {
-            vscode.window.showInformationMessage('Running current file in UAE...');
+            if(amiga) {
+                vscode.window.showInformationMessage('Running current file on your Amiga...');
+            }
+            else {
+                vscode.window.showInformationMessage('Running current file in UAE...');
+            }
         }
         if (run && all)
         {
-            vscode.window.showInformationMessage('Opening all files and running current file in UAE...');
+            if(amiga) {
+                vscode.window.showInformationMessage('Opening all files and running current file on your Amiga...');
+            }
+            else {
+                vscode.window.showInformationMessage('Opening all files and running current file in UAE...');
+            }
         }
         if (!run&& all)
         {
-            vscode.window.showInformationMessage('Opening all files in UAE...');
+            if(amiga) {
+                vscode.window.showInformationMessage('Opening all files on your Amiga...');
+            }
+            else {
+                vscode.window.showInformationMessage('Opening all files in UAE...');
+            }
         }
         if (vscode.window.activeTextEditor != undefined && vscode.workspace.workspaceFolders!= undefined) {
 
@@ -285,6 +328,7 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 const mainFile=path.basename(vscode.window.activeTextEditor.document.fileName);
                 const currentSubfolder= file.substring(0,file.length-mainFile.length);
                 let includes: string[]=[];
+                let includesFtp: string[]=[];
                 if (settings.blitzType==='BB2') {
                     if (all) {
                         var files = fs.readdirSync(folder);
@@ -293,22 +337,18 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                                 let target=folder+'/'+f.replace('.bba','.bb2');
                                 replaceFile(folder+'/'+f,target); //.bba file on vscode side, .bb2 for Ted on the amiga.
                                 //Clean end of line to LF (CR/LF trigger error in BB2 compilation)
-                                if (fs.existsSync(target)) {
-                                    let inContent=fs.readFileSync(target,'utf8');
-                                    const outContent=inContent.replace(/\r\n/g, "\n");
-                                    fs.writeFileSync(target, outContent);
-                                } else {
-                                    console.log("Can't find file "+target+", skip crlf to lf.");
-                                }
+                                crLfToLf(target);
                             
                                 if (f !== mainFile) {
                                     includes.push(sharedFolder+currentSubfolder+f.replace('.bba','.bb2'));
+                                    includesFtp.push(folder.replace('\\','/') + "/" + f.replace('.bba','.bb2'));
                                 }
                             }
                         });
                     } else {
                         if (path.extname(mainFile)=='.bba') {
                             replaceFile(folder+'/'+mainFile,folder+'/'+mainFile.replace('.bba','.bb2')); //.bba file on vscode side, .bb2 for Ted on the amiga.
+                            crLfToLf(folder+'/'+mainFile.replace('.bba','.bb2'));
                         }
                     }
                 }
@@ -321,7 +361,10 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                     arexxFile='amiblitz3';
                 }
 
-                console.log('Connecting in TCP (AUX:) to UAE');
+                if(amiga)
+                    console.log('Connecting in TCP (AUX:) to Amiga');
+                else
+                    console.log('Connecting in TCP (AUX:) to UAE');
 
                 let command:string;
                 if (run) {
@@ -346,57 +389,104 @@ function runAndLoadInUAE(context: vscode.ExtensionContext,settings:vscode.Worksp
                 includes.forEach((include) => {
                     command+=" \""+include.replace('\\','/')+"\"";
                 });
-                command+="\r";
+                if(!amiga) {
+                    command+="\r";
+                }
 
                 console.log(command);
-            
-                var client  = new net.Socket();
 
-                const connect = () => { client.connect({ port: settings.UAEPort }); };
+                if(amiga)
+                {
+                    // Create an FTP script
+                    let ftpCommand:string = "open " + settings.IPAddress + "\n" + settings.FTPUser + "\n" + settings.FTPPassword + "\ncd " + trimSlashes(currentSubfolder) + "\n";
+                    ftpCommand += "put \"" + folder.replace(/\\/g, "/")+'/'+mainFile.replace('.bba','.bb2')+"\"\n";
+                    includesFtp.forEach((includeFtp) => {
+                        ftpCommand += "put \""+includeFtp.replace(/\\/g, "/")+"\"\n";
+                    });
+                    ftpCommand += "quit";
 
-                client.once('connect', function() {
-                    console.log('Connected to UAE!');
-                    client.setEncoding("ascii");
-                });
-                
-                let outData:string = "";
-                client.on('connect',function(){
-                    console.log('Client: connection established with server');
-                    activateEmulator(context, settings); // Bring the emulator to the front
-                    client.write("\r"); // to avoid bug
-                    // writing data to server
-                    client.write(command);
+                    // Save the FTP script
+                    fs.writeFileSync(dir+'/ftpcommand.txt',new Uint8Array(Buffer.from(ftpCommand)),'utf-8');
+                    
+                    // Create the folder on the Amiga
+                    var stdout = execSync("rsh " + settings.IPAddress + " makedir \"" + sharedFolder + trimSlashes(currentSubfolder) + "\"");
+                    console.log(stdout.toString());
+                    
+                    // Run the FTP command (transfer BB2 files)
+                    stdout = execSync("ftp -s:" + folder+"\\build\\ftpcommand.txt");
+                    console.log(stdout.toString());
 
-                    setTimeout(function(){
-                        console.log("Client disconnecting, data received: " + outData);
-                        client.end();
-                    },1000);
+                    // Run the REXX script
+                    // TODO: Fix this shit
+                    exec("rsh " + settings.IPAddress + " \"" + command.replace(/\"/g, "\\\"") + "\"", (error, stdout, stderr) => {});
 
-                });
+                }
+                else 
+                {
+                    var client  = new net.Socket();
 
-                let retried:boolean = false;
-                client.on('error', function(e:any) {
-                    if(!retried && e.code === 'ECONNREFUSED')
-                    {
-                        console.log('Connection to UAE failed! Starting UAE...');
-                        //vscode.window.showInformationMessage('Starting UAE, please wait!');
-                        if(settings.UAECommandLine.length > 0) {
-                            exec(settings.UAECommandLine, (error, stdout, stderr) => {});
-                            setTimeout(connect,settings.UAELaunchDelay*1000);
+                    const connect = () => { client.connect({ port: settings.UAEPort }); };
+
+                    client.once('connect', function() {
+                        console.log('Connected to UAE!');
+                        client.setEncoding("ascii");
+                    });
+                    
+                    let outData:string = "";
+                    client.on('connect',function(){
+                        console.log('Client: connection established with server');
+                        activateEmulator(context, settings); // Bring the emulator to the front
+                        client.write("\r"); // to avoid bug
+                        // writing data to server
+                        client.write(command);
+
+                        setTimeout(function(){
+                            console.log("Client disconnecting, data received: " + outData);
+                            client.end();
+                        },1000);
+
+                    });
+
+                    let retried:boolean = false;
+                    client.on('error', function(e:any) {
+                        if(!retried && e.code === 'ECONNREFUSED')
+                        {
+                            console.log('Connection to UAE failed! Starting UAE...');
+                            //vscode.window.showInformationMessage('Starting UAE, please wait!');
+                            if(settings.UAECommandLine.length > 0) {
+                                exec(settings.UAECommandLine, (error, stdout, stderr) => {});
+                                setTimeout(connect,settings.UAELaunchDelay*1000);
+                            }
+                            retried = true;
                         }
-                        retried = true;
-                    }
-                });
+                    });
 
-                connect();
-                
-                client.on('data',function(data:any){
-                    outData+=data;
-                });
-
+                    connect();
+                    
+                    client.on('data',function(data:any){
+                        outData+=data;
+                    });
+                }
             }
         }
     }
+}
+
+function crLfToLf(filePath: string) : boolean {
+    if (fs.existsSync(filePath)) {
+        let inContent=fs.readFileSync(filePath,'utf8');
+        const outContent=inContent.replace(/\r\n/g, "\n");
+        fs.writeFileSync(filePath, outContent);
+        return true;
+    } else {
+        console.log("Can't find file "+filePath+", skip crlf to lf.");
+        return false;
+    }
+}
+
+function trimSlashes(input: string) : string {
+    let out:string = input.replace(/^\\+|\\+$/g, '').replace(/^\/+|\/+$/g, '');
+    return out;
 }
 
 function activateEmulator(context: vscode.ExtensionContext, settings:vscode.WorkspaceConfiguration) : boolean {

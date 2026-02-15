@@ -8,7 +8,7 @@
 		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.11.0",
+	"version": "0.12.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -48,7 +48,7 @@
 					"AmigaBlitzBasic2.sharedFolder": {
 						"type": "string",
 						"default": "SharedCode",
-						"description": "Virtual harddrive volume name in UAE (if not present the `:` wil be added automatically). It is the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match your workspace path."
+						"description": "Virtual harddrive volume name in UAE (if the `:` is not present, it will be automatically added). It is the sharing point of your code between VSCode and UAE. The shared harddrive path configured in WinUAE or FS-UAE should match your workspace path."
 					},
 					"AmigaBlitzBasic2.SetCompilerOptions": {
 						"type": "boolean",
@@ -75,6 +75,28 @@
 						"type": "number",
 						"default": 1234,
 						"description": "UAE serial direct connection port for AUX: mount."
+					}
+				}
+			},
+						{
+				"type": "object",
+				"title": "Real Amiga",
+				"properties": {
+					"AmigaBlitzBasic2.IPAddress": {
+						"type": "string",
+						"description": "IP address of your Amiga. It is recommended that you give your Amiga a static IP address (router DHCP settings)."
+					},
+					"AmigaBlitzBasic2.FTPUser": {
+						"type": "string",
+						"description": "Username for the FTP server on your Amiga."
+					},
+					"AmigaBlitzBasic2.FTPPassword": {
+						"type": "string",
+						"description": "Password for the FTP server on your Amiga. IMPORTANT!: Use a password you don't use anywhere else, since the password is stored as normal text."
+					},
+					"AmigaBlitzBasic2.Assign": {
+						"type": "string",
+						"description": "The volume name (assign) for your projects folder on your Amiga (if the `:` is not present, it will be automatically added)"
 					}
 				}
 			},
@@ -130,7 +152,11 @@
 		"commands": [
 			{
 				"command": "amiga-blitzbasic2.copybuildtools",
-				"title": "BB2: Copy build tools to Amiga OS / UAE"
+				"title": "BB2: Copy build tools to Amiga OS in UAE"
+			},
+			{
+				"command": "amiga-blitzbasic2.copybuildtoolsamiga",
+				"title": "BB2: Copy build tools to Real Amiga"
 			},
 			{
 				"command": "amiga-blitzbasic2.runuae",
@@ -145,16 +171,28 @@
 				"title": "BB2: Open all files and run current in UAE"
 			},
 			{
+				"command": "amiga-blitzbasic2.runamiga",
+				"title": "BB2: Run current file on Real Amiga"
+			},
+			{
+				"command": "amiga-blitzbasic2.openallamiga",
+				"title": "BB2: Open all files on Real Amiga"
+			},
+			{
+				"command": "amiga-blitzbasic2.runallamiga",
+				"title": "BB2: Open all files and run current on Real Amiga"
+			},
+			{
 				"command": "amiga-blitzbasic2.buildADF",
-				"title": "BB2: build an bootable adf from executable and assets"
+				"title": "BB2: build a bootable ADF from executable and assets"
 			},
 			{
 				"command": "amiga-blitzbasic2.buildISO",
-				"title": "BB2: build an bootable ISO for CDTV and/or CD32 from executable and assets"
+				"title": "BB2: build a bootable ISO for CDTV and/or CD32 from executable and assets"
 			},
 			{
 				"command": "amiga-blitzbasic2.buildZIP",
-				"title": "BB2: build an ZIP file of your game for HD install."
+				"title": "BB2: build a ZIP file of your game for HD install"
 			}
 		],
 		"languages": [
@@ -211,6 +249,24 @@
 				"command": "amiga-blitzbasic2.runalluae",
 				"key": "ctrl+f8",
 				"mac": "cmd+f8",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "amiga-blitzbasic2.runamiga",
+				"key": "ctrl+f9",
+				"mac": "cmd+f9",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "amiga-blitzbasic2.openallamiga",
+				"key": "ctrl+f10",
+				"mac": "cmd+f10",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "amiga-blitzbasic2.runallamiga",
+				"key": "ctrl+f11",
+				"mac": "cmd+f11",
 				"when": "editorTextFocus"
 			},
 			{
