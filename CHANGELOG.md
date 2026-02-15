@@ -1,9 +1,10 @@
 # Change Log
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
-## [0.12.0 ] - 2026-02-14
+## [0.12.0 ] - 2026-02-15
 - Initial Real Amiga build support.
 - Automatic compiler options bug fixed.
+- Updated instructions.
 ## [0.11.0 ] - 2025-08-21
 - Build tools for Amiga OS needs to be copied (once per shared folder / Blitz type) using a command (Ctrl/Cmd+Shift+P) instead of automatically being copied at every build process.
 - Option to set compiler options automatically as part of the build process (BB2).
