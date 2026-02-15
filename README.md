@@ -12,9 +12,15 @@ The build tools that were automatically copied every time to Amiga OS as part of
 
 To open and run your current Blitz Basic 2 source file (.bba) on UAE, use the shortcut `Ctrl-F6` (Win, Linux) or `Cmd-F6`(MacOS).
 
-To open the Blitz Basic 2 source files (.bba) in your current folder, use the shortcut `Ctrl-F7` (Win, Linux) or `Cmd-F7`(MacOS).
+To open the Blitz Basic 2 source files (.bba) in your current folder on UAE, use the shortcut `Ctrl-F7` (Win, Linux) or `Cmd-F7`(MacOS).
 
 To open the Blitz Basic 2 source files (.bba) in your current folder AND run them on UAE, use the shortcut `Ctrl-F8` (Win, Linux) or `Cmd-F8`(MacOS).
+
+To open and run your current Blitz Basic 2 source file (.bba) on a Real Amiga, use the shortcut `Ctrl-F9` (Win, Linux) or `Cmd-F9`(MacOS).
+
+To open the Blitz Basic 2 source files (.bba) in your current folder on a Real Amiga, use the shortcut `Ctrl-F10` (Win, Linux) or `Cmd-F10`(MacOS).
+
+To open the Blitz Basic 2 source files (.bba) in your current folder AND run them on a Real Amiga, use the shortcut `Ctrl-F11` (Win, Linux) or `Cmd-F11`(MacOS).
 
 To package an ADF, use the shortcut `Ctrl-F4` (Win, Linux) or `Cmd-F4`(MacOS). You need to manually create an executable in Blitz Basic 2 before using this feature.
 
@@ -303,6 +309,29 @@ MacOS, the script used is the one shown below. It should work as is.
 ~/.vscode/extensions/mickgyver.amiga-blitzbasic2*/resources/scripts/activate.osa
 ```
 
+## Real Amiga support
+Currently you will need Roadshow as your TCP/IP stack on your Amiga, because this feature relies on the built in RSH (Remote Shell) support of Roadshow.
+### Setting up things on the Amiga side
+1. Set up your network card using Roadshow.
+2. Edit the file SYS:Devs/Internet/servers and remove 'inactive' from the line starting with shell.
+3. Make an assign for your Blitz Basic 2 projects root folder in your startup-sequence or user-startup file. This example uses the folder BB2Projects but you can name it something else as well.
+    ```
+    Assign >NIL: BB2Projects: SYS:BB2Projects
+    ```
+4. Edit SYS:Devs/Internet/users and add the user
+    ```
+    NAME=ftp UID=2 GID=2 PASSWORD=yourpassword DIR=BB2Projects:
+    ```
+5. Edit SYS:Devs/Internet/groups and add the group
+    ```
+    NAME=ftp ID=2 USERS=ftp
+    ```
+6. Download OrangeFTPd and copy the executable to SYS:C. This is the only FTP daemon I have managed to get properly working.
+7. Run OrangeFTPd, you need to have it running. You can run it with the argument -nogui if you want.
+### Setting up Real Amiga build support on your PC
+1. Install RSH (remote shell).
+2. More info soon!
+
 ## Known Issues
 
 Syntax highlighting is limited.
@@ -326,6 +355,9 @@ Stop bits:         1
 [@youen_chene](https://twitter.com/youen_chene)
 
 ## Release Notes
+## 0.12.0
+- Initial Real Amiga build support.
+- Automatic compiler options bug fixed.
 ## 0.11.0
 - Build tools for Amiga OS needs to be copied (once per shared folder / Blitz type) using a command (Ctrl/Cmd+Shift+P) instead of automatically being copied at every build process.
 - Option to set compiler options automatically as part of the build process (BB2).

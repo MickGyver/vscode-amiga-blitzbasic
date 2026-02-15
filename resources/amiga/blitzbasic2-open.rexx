@@ -54,6 +54,13 @@ SHOWSCREEN
 WINDOWTOFRONT
 ACTIVATE
 
+/* Load and save the main file to create the .xtra file for it if needed */
+xtraFile = parameter.1||'.xtra'
+IF ~EXISTS(xtraFile) THEN DO
+	LOAD parameter.1
+	SAVE
+END
+
 /* Load and save all the include files to make them tokenized (command line parameters 2+) */
 DO counter = 2 TO parameter.0
    LOAD parameter.counter
@@ -61,8 +68,9 @@ DO counter = 2 TO parameter.0
 END
 
 /* Set compiler options */
-IF LENGTH(xtraFlags) > 0 THEN DO
+IF LENGTH(xtraFlags) > 0 & EXISTS(xtraFile) THEN DO
 	ADDRESS COMMAND 'Run >NIL: BB2XtraEditor '||parameter.1||'.xtra '||xtraFlags
+	ADDRESS COMMAND 'Wait >NIL: 1 SEC'
 END
 
 /* Load the main project file (first command line parameter) */
