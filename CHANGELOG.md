@@ -1,9 +1,14 @@
 # Change Log
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
+## [0.13.0 ] - 2026-02-23
+- The Blitz Basic 2.1 manual has been added and can be opened from the command palette. 
+- Linux script to bring FS-UAE window to front is updated.
+- ReadMe restructured.
+- Fixed ISO build bug.
 ## [0.12.0 ] - 2026-02-15
 - Initial Real Amiga build support.
-- Automatic compiler options bug fixed.
+- Automatic compiler options bug fixed. **Note:** you need to copy the build tools again for this update to take effect.
 - Updated instructions.
 ## [0.11.0 ] - 2025-08-21
 - Build tools for Amiga OS needs to be copied (once per shared folder / Blitz type) using a command (Ctrl/Cmd+Shift+P) instead of automatically being copied at every build process.

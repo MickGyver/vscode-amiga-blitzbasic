@@ -8,7 +8,7 @@
 		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.12.0",
+	"version": "0.13.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -184,15 +184,19 @@
 			},
 			{
 				"command": "amiga-blitzbasic2.buildADF",
-				"title": "BB2: build a bootable ADF from executable and assets"
+				"title": "BB2: Build a bootable ADF from executable and assets"
 			},
 			{
 				"command": "amiga-blitzbasic2.buildISO",
-				"title": "BB2: build a bootable ISO for CDTV and/or CD32 from executable and assets"
+				"title": "BB2: Build a bootable ISO for CDTV and/or CD32 from executable and assets"
 			},
 			{
 				"command": "amiga-blitzbasic2.buildZIP",
-				"title": "BB2: build a ZIP file of your game for HD install"
+				"title": "BB2: Build a ZIP file of your game for HD install"
+			},
+			{
+				"command": "amiga-blitzbasic2.showManual",
+				"title": "BB2: Show the Blitz Basic 2.1 Manual"
 			}
 		],
 		"languages": [

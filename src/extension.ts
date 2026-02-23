@@ -139,10 +139,17 @@ export function activate(context: vscode.ExtensionContext) {
     let buildISOCommand = vscode.commands.registerCommand('amiga-blitzbasic2.buildISO', () => {
         buildSupport(context,sharedFolder,"ISO");
 	});
+    context.subscriptions.push(buildISOCommand);
+
     let buildZIPCommand = vscode.commands.registerCommand('amiga-blitzbasic2.buildZIP', () => {
         buildSupport(context,sharedFolder,"ZIP");
 	});
 	context.subscriptions.push(buildZIPCommand);
+
+    let showManualCommand = vscode.commands.registerCommand('amiga-blitzbasic2.showManual', () => {
+        showManual(context, settings);
+	});
+	context.subscriptions.push(showManualCommand);
 
 	context.subscriptions.push(
         vscode.languages.registerDocumentSymbolProvider(
@@ -496,8 +503,9 @@ function activateEmulator(context: vscode.ExtensionContext, settings:vscode.Work
 		command = "osascript \"" + context.extensionPath + "/resources/scripts/activate.osa" + "\" " + "fs-uae";
 		break;
 	case "linux":
-		command = "\"" + context.extensionPath + "/resources//scripts/activate.sh" + "\" " + "fs-uae";
-		break;
+		command = "\"" + context.extensionPath + "/resources/scripts/activate.sh" + "\" " + "fs-uae";
+        break;
+
 	case "win32":
 		command = "cscript //nologo \"" + context.extensionPath + "\\resources\\scripts\\activate.vbs" + "\" ";
         if(settings.UAECommandLine.toLowerCase().indexOf("fs-uae") >= 0) {
@@ -514,6 +522,32 @@ function activateEmulator(context: vscode.ExtensionContext, settings:vscode.Work
 		exec(command, (error, stdout, stderr) => {
 			if (error) {
 				console.log("Problem activating the emulator!");
+                activated = false;
+			}
+		});
+	}
+    return activated;
+}
+
+function showManual(context: vscode.ExtensionContext, settings:vscode.WorkspaceConfiguration) : boolean {
+	let command:string = "";
+	switch (process.platform) {
+	case "darwin":
+		command = "open \"" + context.extensionPath + "/resources/doc/Blitz-Basic-2.1-Manual.pdf\"";
+		break;
+	case "linux":
+		command = "xdg-open \"" + context.extensionPath + "/resources/doc/Blitz-Basic-2.1-Manual.pdf\"";
+        break;
+	case "win32":
+		command = "start \"\" \"" + context.extensionPath + "\\resources\\doc\\Blitz-Basic-2.1-Manual.pdf\"";
+		break;
+	}
+    console.log(command);
+    let activated:boolean = true;
+	if (command !== "") {
+		exec(command, (error, stdout, stderr) => {
+			if (error) {
+				console.log("Problem opening the manual!");
                 activated = false;
 			}
 		});
