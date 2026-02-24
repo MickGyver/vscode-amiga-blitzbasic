@@ -35,11 +35,11 @@
         },
         {
           "name": "keyword.control.abb2",
-          "match": "(?i)\\b(Break|Case|Default|Else|End|EndIf|Else|For|Forever|If|Then|Next|Repeat|Select|Step|To|Until|Wend|While|Pop)\\b"
+          "match": "(?i)\\b(SetInt|End SetInt|Break|Case|Default|Else|End|EndIf|Else|For|Forever|If|Then|Next|Repeat|Select|Step|To|Until|Wend|While|Pop|Use)\\b"
         },
         {
-          "name": "entity.name.function.abb2",
-          "match": "(?i)\\b(And|Not|Or|XOr|MOD|LSR|LSL|ASR|ASL|JSR|BSR|RTS)\\b"
+          "name": "keyword.operator.abb2",
+          "match": "(?i)\\b(And|Not|Or|XOr|MOD|LSR|LSL|ASR|ASL|JSR|BSR|RTS|On|Off|BitSet|BitClr|BitChg|BitTst)\\b"
         },
         {
           "name": "constant.language.abb2",
@@ -48,17 +48,31 @@
         {
           "name": "meta.preprocessor.abb2",
           "match": "(?i)\\b(AMIGA|QAMIGA|BLITZ|CEND|CNIF|CSIF|CELSE|CERR|INCLUDE|INCBIN|INCDIR|XINCLUDE|XINCDIR|EVEN|DEFTYPE|NEWTYPE|USEPATH|Runerrson|Runerrsoff|USED|Addr|Maximum)\\b"
+        },
+        {
+          "name": "keyword.operator.abb2.assembly",
+          "match": "(?i)\\b(ADD|ADDX|ANDI|ASR|BCHG|BCLR|BEQ|BRA|BSET|BTST|CHK|CLR|CMP|CMP|CMPA|CMPI|CMPM|CMPMEM|DBcc|DBF|DBRA|DCB|DIVS|DIVU|EOR|EORI|EXG|EXT|ILLEGAL|JMP|JSR|LEA|LINK|LSL|LSR|MOVE|MOVEA|MOVEM|MOVEP|MOVEQ|MULS|MULU|NBCD|NEG|NEGX|NOP|NOT|ORI|PEA|RESET|ROL|ROR|ROXL|ROXR|RTE|RTR|RTS|SBCD|Scc|SEQ|SNE|STOP|SUB|SUBA|SUBI|SUBQ|SUBX|SWAP|TAS|TRAP|TRAPV|TST|UNLK)\\b"
         }
       ]
     },
 		"commands": {
       "patterns": [
         {
-          "name": "support.function.abb2",
-          "match": "(?i)\\b(WBStartUp|ShowBitmap)\\b"
+          "name": "entity.name.section.abb2",
+          "match": "\\b([a-zA-Z][a-zA-Z0-9]*:)"
         },
         {
-          "match": "[^\\.](\\b\\w[\\w\\d]*|[^\\w]@[\\w\\d]*)\\(",
+          "match": "(\\b\\w[\\w\\d\\.]*|[^\\w]@[\\w\\d]*)_\\(",
+          "captures":
+          {
+            "1":
+            {
+              "name": "entity.name.function.abb2.os"
+            }
+          }
+        },
+        {
+          "match": "(\\b\\w[\\w\\d\\.]*|[^\\w]@[\\w\\d]*)\\(",
           "captures":
           {
             "1":
@@ -68,14 +82,26 @@
           }
         },
         {
-          "match": "[^\\.](\\b\\w[\\w\\d]*|[^\\w]@[\\w\\d]*)\\{",
+          "match": "(\\b\\w[\\w\\d]*|[^\\w]@[\\w\\d]*)\\{",
           "captures":
           {
             "1":
             {
-              "name": "entity.name.function.abb2"
+              "name": "entity.name.function.abb2.user"
             }
           }
+        },
+        {
+          "name": "support.function.abb2.os",
+          "match": "\\b([A-Z][a-zA-Z0-9]+)_\\b"
+        },
+        {
+          "name": "support.function.abb2.statement",
+          "match": "\\b([A-Z][a-zA-Z0-9]+)\\b"
+        },
+        {
+          "name": "variable.other.abb2",
+          "match": "\\b([a-z_][a-zA-Z0-9_]*)\\b"
         }
       ]
     },

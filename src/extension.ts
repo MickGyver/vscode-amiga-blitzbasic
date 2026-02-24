@@ -56,9 +56,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Congratulations, your extension "Amiga Blitz Basic 2" is now active!');
 
-    context.subscriptions.push(
+    /*context.subscriptions.push(
         vscode.languages.registerDocumentSymbolProvider(
-            BB2_MODE, new GoDocumentSymbolProvider()));
+            BB2_MODE, new GoDocumentSymbolProvider()));*/
 
     vscode.languages.registerHoverProvider('abb2', {
         provideHover(document, position, token) {
@@ -676,7 +676,7 @@ class ABB2DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
     }
 }
 
-class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
+/*class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
     public provideDocumentSymbols(document: vscode.TextDocument,
             token: vscode.CancellationToken): Thenable<vscode.SymbolInformation[]> {
         return new Promise((resolve, reject) => {
@@ -741,7 +741,7 @@ class GoDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
             resolve(symbols);
         });
     }
-}
+}*/
 
 async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string,targetType:string) {
     const settings = vscode.workspace.getConfiguration('AmigaBlitzBasic2');
@@ -804,10 +804,14 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
 
                                     const libsFolderSector=adf.createFolder("Libs",adf.rootSector);
                                     if (support.includeDiskFontLibrary) {
-                                        uploadAdf(context.extensionPath+'/resources/packaging/diskfont.library',libsFolderSector,adf);
+                                        if (settings.DiskFontLibrary.length > 0) {
+                                            uploadAdf(settings.DiskFontLibrary,libsFolderSector,adf);
+                                        }
                                     }
                                     if (support.includeMathTransLibrary) {
-                                        uploadAdf(context.extensionPath+'/resources/packaging/mathtrans.library',libsFolderSector,adf);
+                                        if (settings.MathTransLibrary.length > 0) {
+                                            uploadAdf(settings.MathTransLibrary,libsFolderSector,adf);
+                                        }
                                     }
 
                                     // Write target disk.
@@ -897,10 +901,14 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
 
                         fs.mkdirSync(dirBuildISO+"/Libs", 0o744);
                         if (support.includeDiskFontLibrary) {
-                            replaceFile(context.extensionPath+'/resources/packaging/diskfont.library',dirBuildISO+'/Libs/diskfont.library'); 
+                            if (settings.DiskFontLibrary.length > 0) {
+                                replaceFile(settings.DiskFontLibrary,dirBuildISO+'/Libs/diskfont.library'); 
+                            }
                         }
                         if (support.includeMathTransLibrary) {
-                            replaceFile(context.extensionPath+'/resources/packaging/mathtrans.library',dirBuildISO+'/Libs/mathtrans.library'); 
+                            if (settings.MathTransLibrary.length > 0) {
+                                replaceFile(settings.MathTransLibrary,dirBuildISO+'/Libs/mathtrans.library'); 
+                            }
                         }
 
                         fs.mkdirSync(dirBuildISO+"/C", 0o744);

@@ -1,6 +1,10 @@
 # Change Log
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
+## [0.14.0 ] - 2026-02-24
+- Syntax highlighting improved.
+- Outline duplicate removed.
+- From now on, you will need to supply your own libraries when packaging to ADF or ISO.
 ## [0.13.0 ] - 2026-02-23
 - The Blitz Basic 2.1 manual has been added and can be opened from the command palette. 
 - Linux script to bring FS-UAE window to front is updated.

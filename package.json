@@ -8,7 +8,7 @@
 		"url": "https://github.com/MickGyver/vscode-amiga-blitzbasic.git"
 	},
 	"icon": "resources/images/bb2.png",
-	"version": "0.13.0",
+	"version": "0.14.0",
 	"engines": {
 		"vscode": "^1.53.0"
 	},
@@ -130,21 +130,29 @@
 				"type": "object",
 				"title": "Packaging",
 				"properties": {
+					"AmigaBlitzBasic2.DiskFontLibrary": {
+						"type": "string",
+						"description": "Full path to the diskfont.library file."
+					},
+					"AmigaBlitzBasic2.MathTransLibrary": {
+						"type": "string",
+						"description": "Full path to the mathtrans.library file."
+					},
 					"AmigaBlitzBasic2.ISOCD": {
 						"type": "string",
-						"description": "Filepath for the ISOCD from the cd32 developer kit."
+						"description": "Full path to the ISOCD file from the cd32 developer kit."
 					},
 					"AmigaBlitzBasic2.CDTVTM": {
 						"type": "string",
-						"description": "Filepath for the CDTV.TM from the cdtv or cd32 developer kit."
+						"description": "Full path to the CDTV.TM file from the cdtv or cd32 developer kit."
 					},
 					"AmigaBlitzBasic2.CD32TM": {
 						"type": "string",
-						"description": "Filepath for the CD32.TM from the cd32 developer kit."
+						"description": "Full path to the CD32.TM file from the cd32 developer kit."
 					},
 					"AmigaBlitzBasic2.RMTM": {
 						"type": "string",
-						"description": "Filepath for the RMTM from the cdtv or cd32 developer kit."
+						"description": "Full path to the RMTM file from the cdtv or cd32 developer kit."
 					}
 				}
 			}

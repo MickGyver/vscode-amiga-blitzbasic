@@ -226,9 +226,9 @@ Each support entry (multi disk and multi support) support the following paramete
 
 `exeToLaunch`: the exe to launch in startup sequence.
 
-`includeDiskFontLibrary`: for bootable support, `true` if you do disk access in your software.
+`includeDiskFontLibrary`: for bootable support, `true` if you do disk access in your software. You need to supply your own diskfont.library file. You can set the path to it in the settings for the extension.
 
-`includeMathTransLibrary`: for bootable support, `true` if you do advanced mathematical as sinus or cosinus.
+`includeMathTransLibrary`: for bootable support, `true` if you do advanced mathematical as sinus or cosinus. You need to supply your own mathtrans.library file. You can set the path to it in the settings for the extension.
 
 `filesToIncludeOnRoot`: list all the files to include on the root folder of the support, typically your executable and .info files.
 
@@ -296,6 +296,7 @@ You need to enter the path of these files into the extension settings :
     ]
 }
 ```
+**Note:** You need to supply your own diskfont.library and mathtrans.library files. You can set the path to them in the settings for the extension.
 
 `supportVolumeSet`: (optional) Identifier of the volume set of which this volume is a member.
 
