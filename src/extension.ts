@@ -314,7 +314,7 @@ function runAndLoad(context: vscode.ExtensionContext,settings:vscode.WorkspaceCo
                 vscode.window.showInformationMessage('Opening all files and running current file in UAE...');
             }
         }
-        if (!run&& all)
+        if (!run && all)
         {
             if(amiga) {
                 vscode.window.showInformationMessage('Opening all files on your Amiga...');
@@ -374,11 +374,12 @@ function runAndLoad(context: vscode.ExtensionContext,settings:vscode.WorkspaceCo
                     console.log('Connecting in TCP (AUX:) to UAE');
 
                 let command:string;
+                command = 'rx S:'+arexxFile+'.rexx';
                 if (run) {
-                 command='rx S:'+arexxFile+'.rexx';
+                 command += ' -r'
                 }
-                else {
-                    command='rx S:'+arexxFile+'-open.rexx';
+                if (all) {
+                 command += ' -a'
                 }
                 if (settings.blitzType==='BB2') {
                     if(settings.SetCompilerOptions) {
@@ -393,9 +394,6 @@ function runAndLoad(context: vscode.ExtensionContext,settings:vscode.WorkspaceCo
                 } else {
                     command+=" \""+sharedFolder+file.replace('\\','/')+"\"";
                 }
-                includes.forEach((include) => {
-                    command+=" \""+include.replace('\\','/')+"\"";
-                });
                 if(!amiga) {
                     command+="\r";
                 }
@@ -998,12 +996,19 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                         }
 
                         var client  = new net.Socket();
-                        client.setEncoding('ascii');
+
+                        const connect = () => { client.connect({ port: settings.UAEPort }); };
+
+                        client.once('connect', function() {
+                            console.log('Connected to UAE!');
+                            client.setEncoding("ascii");
+                        });
                         
                         client.on('data',function(data:any){
                             console.log(data);
                         });
 
+                        let outData:string = "";
                         client.on('connect',function(){
                             console.log('Client: connection established with server');
                             client.write("\r"); // to avoid bug
@@ -1015,18 +1020,36 @@ async function buildSupport(context: vscode.ExtensionContext,sharedFolder:string
                             const command="isocd -lLayout"+support.type.toUpperCase()+" -c"+support.type.toUpperCase()+".TM -b \r";
                             console.log(command);
                             client.write(command); 
+
+                            setTimeout(function(){
+                                console.log("Client disconnecting, data received: " + outData);
+                                client.end();
+                            },1000);
+                        });
+
+                        let retried:boolean = false;
+                        client.on('error', function(e:any) {
+                            if(e.code === 'ECONNREFUSED') {
+                                if(!retried) {
+                                    console.log('Connection to UAE failed! Starting UAE...');
+                                    if(settings.UAECommandLine.length > 0) {
+                                        exec(settings.UAECommandLine, (error, stdout, stderr) => {});
+                                        setTimeout(connect,settings.UAELaunchDelay*1000);
+                                    }
+                                    retried = true;
+                                }
+                                else {
+                                    vscode.window.showInformationMessage('Failed to copy create ISO file! Ensure that UAE is running and correctly configured.');
+                                }
+                            }
                         });
                         
-     
-                        client.connect({
-                            port: settings.UAEPort
+                        connect();
+
+                        client.on('data',function(data:any){
+                            outData+=data;
                         });
-
-                        setTimeout(function(){
-                            client.end('Bye bye server');
-                        },1000);
         
-
                         if (support.type.toUpperCase() == 'CDTV') {
                             vscode.window.showInformationMessage('ISO for CDTV and CD32 ready for support : '+support.supportName+' !');
                         } else {

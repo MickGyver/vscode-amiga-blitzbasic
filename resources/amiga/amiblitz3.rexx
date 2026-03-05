@@ -6,18 +6,39 @@ ab3exe = 'AmiBlitz:Amiblitz3'
 /* Get all command line parameters */
 PARSE ARG commandline
 count = 0
+optionTemp = ''
+optionAll = 0
+optionRun = 0
 DO WHILE LENGTH( commandline ) > 0
-   commandline = STRIP( commandline, 'B' )
-   count = count + 1
-   IF LEFT( commandline, 1 ) = '"' THEN DO
+  commandline = STRIP( commandline, 'B' )
+	IF LEFT(commandline, 1) = '-' THEN DO
+    PARSE VAR commandline optionTemp commandline
+    IF COMPARE(optionTemp, '-a') = 0 THEN optionAll = 1
+    IF COMPARE(optionTemp, '-r') = 0 THEN optionRun = 1
+  END
+  ELSE DO
+    count = count + 1
+    IF LEFT( commandline, 1 ) = '"' THEN DO
       PARSE VAR commandline '"'parameter.count'"' commandline
-   END
-   ELSE DO
+    END
+    ELSE DO
       PARSE VAR commandline parameter.count commandline
-   END
+    END
+	END
 END
 parameter.0 = count
 DROP commandline
+
+/* Check if we have a filename */
+IF parameter.0 = 0 THEN DO
+  SAY "No AB3 file supplied!"
+  EXIT 10
+END
+
+/* Separate directory and filename of main file */
+directory = ''
+filename = ''
+PARSE VAR parameter.1 directory '/' filename
 
 /* Start Ped if it is not running */
 IF ~SHOW('P', 'PED.1') THEN DO
@@ -45,14 +66,8 @@ SHOWSCREEN
 WINDOWTOFRONT
 ACTIVATE
 
-/* Load and save all the include files to make them tokenized (command line parameters 2+) */
-DO counter = 2 TO parameter.0
-   LOAD parameter.counter
-   SAVE
-END
-
 /* Load the main project file (first command line parameter) */
 LOAD parameter.1
 
 /* Compile the project */
-COMPILE
+IF optionRun > 0 THEN COMPILE
