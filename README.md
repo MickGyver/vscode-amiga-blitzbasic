@@ -190,6 +190,10 @@ Currently you will need Roadshow as your TCP/IP stack on your Amiga, because thi
    
 2. More info to follow.
 
+
+## Packaging
+Below you can read how to package your project to ADF, ISO or ZIP. Keep in mind that you should try to avoid the need to include any AmigaDOS libraries etc. if you plan to make and distribute a commercial product, since the copyright holders might come asking for licensing costs.
+
 ## Generate an ADF Image from your project files
 
 You can generate an ADF image from a `packaging.json` file created at the root folder of your project using  `Ctrl-F4` (Win, Linux) or `Cmd-F4`(MacOS) :
@@ -202,8 +206,8 @@ You can generate an ADF image from a `packaging.json` file created at the root f
             "boot": true,
             "supportName": "Blower",
             "exeToLaunch": "blower.exe",
-            "includeDiskFontLibrary": true,
-            "includeMathTransLibrary": true,
+            "includeDiskFontLibrary": false,
+            "includeMathTransLibrary": false,
             "filesToIncludeOnRoot": [
                 "blower.exe",
                 "blower.exe.info"
@@ -264,8 +268,8 @@ You need to enter the path of these files into the extension settings :
             "supportPreparer": "",
             "supportApplication": "",
             "exeToLaunch": "blower.exe",
-            "includeDiskFontLibrary": true,
-            "includeMathTransLibrary": true,
+            "includeDiskFontLibrary": false,
+            "includeMathTransLibrary": false,
             "filesToIncludeOnRoot": [
                 "blower.exe",
                 "blower.exe.info"
@@ -283,8 +287,8 @@ You need to enter the path of these files into the extension settings :
             "supportPreparer": "",
             "supportApplication": "",
             "exeToLaunch": "blower.exe",
-            "includeDiskFontLibrary": true,
-            "includeMathTransLibrary": true,
+            "includeDiskFontLibrary": false,
+            "includeMathTransLibrary": false,
             "filesToIncludeOnRoot": [
                 "blower.exe",
                 "blower.exe.info"

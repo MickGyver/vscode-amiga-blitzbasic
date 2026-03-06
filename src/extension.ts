@@ -222,13 +222,11 @@ function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.Workspa
         }
         if (settings.blitzType==='BB2') {
             replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2.rexx',dir+'/blitzbasic2.rexx');
-            replaceFile(context.extensionPath + '/resources/amiga/blitzbasic2-open.rexx',dir+'/blitzbasic2-open.rexx');
             replaceFile(context.extensionPath + '/resources/amiga/BB2NagAway',dir+'/BB2NagAway');
             replaceFile(context.extensionPath + '/resources/amiga/BB2XtraEditor',dir+'/BB2XtraEditor');
         }
         else {
             replaceFile(context.extensionPath + '/resources/amiga/amiblitz3.rexx',dir+'/amiblitz3.rexx');
-            replaceFile(context.extensionPath + '/resources/amiga/amiblitz3-open.rexx',dir+'/amiblitz3-open.rexx');
         }
 
         var client  = new net.Socket();
@@ -247,13 +245,11 @@ function copyBuildTools(context: vscode.ExtensionContext,settings:vscode.Workspa
             
             if (settings.blitzType==='BB2') {
                 client.write('copy "'+sharedFolder+'.buildtools/blitzbasic2.rexx" S:\r');
-                client.write('copy "'+sharedFolder+'.buildtools/blitzbasic2-open.rexx" S:\r');
                 client.write('copy "'+sharedFolder+'.buildtools/BB2NagAway" C:\r');
                 client.write('copy "'+sharedFolder+'.buildtools/BB2XtraEditor" C:\r');
             }
             else {
                 client.write('copy "'+sharedFolder+'.buildtools/amiblitz3.rexx" S:\r');
-                client.write('copy "'+sharedFolder+'.buildtools/amiblitz3-open.rexx" S:\r');
             }
 
             //client.write('RequestChoice >NIL: TITLE "VS Code" BODY "Build Tools Copied!" GADGETS OK\r');

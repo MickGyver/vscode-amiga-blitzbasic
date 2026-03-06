@@ -160,51 +160,51 @@
 		"commands": [
 			{
 				"command": "amiga-blitzbasic2.copybuildtools",
-				"title": "BB2: Copy build tools to Amiga OS in UAE"
+				"title": "BB2: UAE> Copy build tools to WB"
 			},
 			{
 				"command": "amiga-blitzbasic2.copybuildtoolsamiga",
-				"title": "BB2: Copy build tools to Real Amiga"
+				"title": "BB2: Amiga> Copy build tools to WB"
 			},
 			{
 				"command": "amiga-blitzbasic2.runuae",
-				"title": "BB2: Run current file in UAE"
+				"title": "BB2: UAE> Run current file"
 			},
 			{
 				"command": "amiga-blitzbasic2.openalluae",
-				"title": "BB2: Open all files in UAE"
+				"title": "BB2: UAE> Open all files"
 			},
 			{
 				"command": "amiga-blitzbasic2.runalluae",
-				"title": "BB2: Open all files and run current in UAE"
+				"title": "BB2: UAE> Open all files and run current"
 			},
 			{
 				"command": "amiga-blitzbasic2.runamiga",
-				"title": "BB2: Run current file on Real Amiga"
+				"title": "BB2: Amiga> Run current file"
 			},
 			{
 				"command": "amiga-blitzbasic2.openallamiga",
-				"title": "BB2: Open all files on Real Amiga"
+				"title": "BB2: Amiga> Open all files"
 			},
 			{
 				"command": "amiga-blitzbasic2.runallamiga",
-				"title": "BB2: Open all files and run current on Real Amiga"
+				"title": "BB2: Amiga> Open all files and run current"
 			},
 			{
 				"command": "amiga-blitzbasic2.buildADF",
-				"title": "BB2: Build a bootable ADF from executable and assets"
+				"title": "BB2: Package> Build a bootable ADF"
 			},
 			{
 				"command": "amiga-blitzbasic2.buildISO",
-				"title": "BB2: Build a bootable ISO for CDTV and/or CD32 from executable and assets"
+				"title": "BB2: Package> Build a bootable ISO for CDTV/CD32"
 			},
 			{
 				"command": "amiga-blitzbasic2.buildZIP",
-				"title": "BB2: Build a ZIP file of your game for HD install"
+				"title": "BB2: Package> Build a ZIP file of your game for HD install"
 			},
 			{
 				"command": "amiga-blitzbasic2.showManual",
-				"title": "BB2: Show the Blitz Basic 2.1 Manual"
+				"title": "BB2: Help> Show the Blitz Basic 2.1 Manual"
 			}
 		],
 		"languages": [
