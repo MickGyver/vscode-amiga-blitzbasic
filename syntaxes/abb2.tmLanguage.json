@@ -1,7 +1,7 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "Amiga Blitz Basic 2",
-	"patterns": [
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Amiga Blitz Basic 2",
+  "patterns": [
     {
       "include": "#keywords"
     },
@@ -18,12 +18,12 @@
       "include": "#numbers"
     }
   ],
-	"repository": {
-		"comments": {
+  "repository": {
+    "comments": {
       "name": "comment.line.abb2",
       "match": ";.*"
     },
-		"keywords": {
+    "keywords": {
       "patterns": [
         {
           "name": "storage.type.abb2",
@@ -55,7 +55,7 @@
         }
       ]
     },
-		"commands": {
+    "commands": {
       "patterns": [
         {
           "name": "entity.name.section.abb2",
@@ -63,30 +63,24 @@
         },
         {
           "match": "(\\b\\w[\\w\\d\\.]*|[^\\w]@[\\w\\d]*)_\\(",
-          "captures":
-          {
-            "1":
-            {
+          "captures": {
+            "1": {
               "name": "entity.name.function.abb2.os"
             }
           }
         },
         {
           "match": "(\\b\\w[\\w\\d\\.]*|[^\\w]@[\\w\\d]*)\\(",
-          "captures":
-          {
-            "1":
-            {
+          "captures": {
+            "1": {
               "name": "entity.name.function.abb2"
             }
           }
         },
         {
           "match": "(\\b\\w[\\w\\d]*|[^\\w]@[\\w\\d]*)\\{",
-          "captures":
-          {
-            "1":
-            {
+          "captures": {
+            "1": {
               "name": "entity.name.function.abb2.user"
             }
           }
@@ -105,7 +99,7 @@
         }
       ]
     },
-		"strings": {
+    "strings": {
       "name": "string.quoted.double.abb2",
       "begin": "\"",
       "end": "\"",
@@ -116,7 +110,7 @@
         }
       ]
     },
-		"numbers": {
+    "numbers": {
       "patterns": [
         {
           "name": "constant.numeric.dec.abb2",
@@ -127,7 +121,7 @@
           "match": "\\$[0-9a-fA-F]+\\b"
         }
       ]
-	  }
+    }
   },
-	"scopeName": "source.abb2"
+  "scopeName": "source.abb2"
 }
