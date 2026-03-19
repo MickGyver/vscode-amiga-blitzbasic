@@ -430,6 +430,10 @@ function runAndLoad(context: vscode.ExtensionContext, settings: vscode.Workspace
 
             setTimeout(function () {
               console.log("Client disconnecting, data received: " + outData);
+              if(outData.indexOf("Program not found") >= 0)
+                vscode.window.showInformationMessage("Automation in UAE failed. You copied the build tools (see instructions)!");
+              else if(outData.indexOf(".rexx") == 0)
+                vscode.window.showInformationMessage("Automation in UAE failed. Try increasing the UAE Launch Delay setting!");
               client.end();
             }, 1000);
 
@@ -721,7 +725,7 @@ async function buildSupport(context: vscode.ExtensionContext, sharedFolder: stri
                   var writeStream = fs.createWriteStream(adfPath);
                   writeStream.write(toBuffer(outDisk.buffer));
                   writeStream.end();
-                  vscode.window.showInformationMessage('ADF Ready for support : ' + support.supportName + ' !');
+                  vscode.window.showInformationMessage('ADF created: ' + support.supportName + ' !');
                 }
               }
             });
@@ -762,7 +766,7 @@ async function buildSupport(context: vscode.ExtensionContext, sharedFolder: stri
             await zip(dirBuildZIP, dirBuild + '/' + support.supportName + '.zip', { compression: COMPRESSION_LEVEL.uncompressed });
 
 
-            vscode.window.showInformationMessage('ZIP Ready for support : ' + support.supportName + ' !');
+            vscode.window.showInformationMessage('ZIP archive created: ' + support.supportName + ' !');
 
           }
 
@@ -951,9 +955,9 @@ async function buildSupport(context: vscode.ExtensionContext, sharedFolder: stri
             });
 
             if (support.type.toUpperCase() == 'CDTV') {
-              vscode.window.showInformationMessage('ISO for CDTV and CD32 ready for support : ' + support.supportName + ' !');
+              vscode.window.showInformationMessage('ISO for CDTV and CD32 created: ' + support.supportName + ' !');
             } else {
-              vscode.window.showInformationMessage('ISO for CD32 only ready for support : ' + support.supportName + ' !');
+              vscode.window.showInformationMessage('ISO for CD32 only created: ' + support.supportName + ' !');
             }
             vscode.window.showInformationMessage('Wait 20 seconds...');
             await delay(20000);

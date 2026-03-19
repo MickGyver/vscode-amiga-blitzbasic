@@ -2,6 +2,10 @@
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
 
+## [0.15.0 ] - 2026-03-14
+- Added some error checking when launching UAE.
+- Notificiations edited. 
+
 ## [0.15.0 ] - 2026-03-06
 - Fixed a problem with too many include files breaking the communication with UAE. The AREXX scripts are now rewritten, so you need to copy build tools again.
 - UAE is started automatically if needed when building ISO files.

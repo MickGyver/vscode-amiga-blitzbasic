@@ -1,0 +1,31 @@
+---------------------------------------------------
+WARP MODE AT START
+---------------------------------------------------
+To save time when testing your code, you can start UAE in warp mode and lower the "UAE Launch Delay" setting for this VS Code extension to as low as 2 seconds.
+
+For WinUAE, enable the start in warp mode option. You can toggle warp mode on/off with the keyboard shortcut END + PAUSE/BREAK (or create your own shortcut for it).
+
+For FS-UAE, add this line to the "additional configuration": warp_mode = 1. You can manually turn off (toggle) warp mode with ALT + W (CMD + W on Mac OS).
+
+---------------------------------------------------
+CLOSE UAE WITH KEYBOARD SHORTCUT
+---------------------------------------------------
+Close WinUAE with ALT + F4
+Close FS-UAE with ALT + Q (CMD + Q on Mac OS)
+
+---------------------------------------------------
+USING THE SERIAL PORT FOR DEBUGGING
+---------------------------------------------------
+You can use the virtual serial port of UAE for debugging your projects. To open the serial port in your BB2 project, use the following line of code:
+
+serialPort.l = OpenSerial("serial.device",0,31250,176)
+
+The value 31250 is the speed and the value 176 is a combination of flags: #serf_xdisabled=128 (disable xon/xoff), #serf_shared=32 (set if you don't need exclusive use of port) and #serf rad_boogie=16 (high speed mode).
+
+To write to the serial port, use the line: 
+
+WriteSerialString 0,"Your text goes here!"
+
+To write numeric values, use the Str$(value) function.
+
+You can connect to this port using Putty or the Serial Monitor extension in VS Code. Connection mode: TCP or RAW, Host: localhost, Port: 1234 and Line ending: CR.
