@@ -2,9 +2,10 @@
 
 All notable changes to the "amiga-blitzbasic2" extension will be documented in this file.
 
-## [0.15.0 ] - 2026-03-14
+## [0.16.0 ] - 2026-03-20
+- Constant values shown on mouse hover (if they are defined in the same source file).
 - Added some error checking when launching UAE.
-- Notificiations edited. 
+- Notifications edited. 
 
 ## [0.15.0 ] - 2026-03-06
 - Fixed a problem with too many include files breaking the communication with UAE. The AREXX scripts are now rewritten, so you need to copy build tools again.

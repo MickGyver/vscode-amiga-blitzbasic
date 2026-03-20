@@ -61,24 +61,45 @@ export function activate(context: vscode.ExtensionContext) {
 
       const range = document.getWordRangeAtPosition(position);
       const word = document.getText(range);
+      const prevtext = getPreviousText(document, range!)
 
       if (bb2doc != undefined) {
-        let command = bb2doc[word];
-        if (command != undefined) {
+        if(prevtext.endsWith("#")) {
+          let line = findLineStartingWith(document,"#"+word)
+          if(line.length > 0)
+          {
+            let comment = ""
+            if(line.indexOf(";")>0) {
+              comment = line.substring(line.indexOf(";")+1).trim();
+              line = line.substring(0, line.indexOf(";"))
+            }
+            const mds = new vscode.MarkdownString();
+            if(comment.length>0)
+              mds.appendMarkdown('<span style="color:#5471C9;">' + line + '<span>\n\n' + comment);
+            else
+              mds.appendMarkdown('<span style="color:#5471C9;">' + line + '<span>');
+            mds.isTrusted = true;
+            return new vscode.Hover(mds);
+          }
+        }
+        else {
+          let command = bb2doc[word];
+          if (command != undefined) {
 
-          const mds = new vscode.MarkdownString();
-          mds.appendMarkdown('<span style="color:#5471C9;">' + command.keyword.toString() + '<span>');
-          if (command.parameters.toString().substring(0, 2) != '\r\n') {
-            mds.appendMarkdown(' <span style="color:#9E622C;">' + command.parameters.toString() + '<span>');
+            const mds = new vscode.MarkdownString();
+            mds.appendMarkdown('<span style="color:#5471C9;">' + command.keyword.toString() + '<span>');
+            if (command.parameters.toString().substring(0, 2) != '\r\n') {
+              mds.appendMarkdown(' <span style="color:#9E622C;">' + command.parameters.toString() + '<span>');
+            }
+            mds.appendMarkdown('\n\n');
+            if (command.shortDescription.toString().length > 0) {
+              mds.appendMarkdown('_' + command.shortDescription.toString() + '_');
+            }
+            mds.appendMarkdown('\n\n');
+            mds.appendMarkdown(command.longDescription.toString());
+            mds.isTrusted = true;
+            return new vscode.Hover(mds);
           }
-          mds.appendMarkdown('\n\n');
-          if (command.shortDescription.toString().length > 0) {
-            mds.appendMarkdown('_' + command.shortDescription.toString() + '_');
-          }
-          mds.appendMarkdown('\n\n');
-          mds.appendMarkdown(command.longDescription.toString());
-          mds.isTrusted = true;
-          return new vscode.Hover(mds);
         }
       }
     }
@@ -161,6 +182,26 @@ export function activate(context: vscode.ExtensionContext) {
     );
   }
 
+}
+
+function getPreviousText(document: vscode.TextDocument, range: vscode.Range): string {
+  const start = range.start;
+  // Get text from start of line → start of word
+  const lineStart = new vscode.Position(start.line, 0);
+  const beforeRange = new vscode.Range(lineStart, start);
+  return document.getText(beforeRange);
+}
+
+function findLineStartingWith(document: vscode.TextDocument,find: string): string {
+  const text = document.getText();
+  const lines = text.split(/\r?\n/);
+
+  const index = lines.findIndex(line => line.trimStart().startsWith(find));
+
+  if (index !== -1)
+    return document.lineAt(index).text;
+  else
+    return "";
 }
 
 // this method is called when your extension is deactivated

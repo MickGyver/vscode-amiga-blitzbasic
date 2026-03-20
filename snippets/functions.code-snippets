@@ -17419,10 +17419,10 @@
 		"body": "Shared ${1:Var[,Var...]}",
 		"description": "Shared is used to declare certain variables within a procedure definition as being global variables."
 	},
-	"Setint Type": {
-		"prefix": "Setint",
-		"body": "Setint ${1:Type}",
-		"description": "Setint is used to declare a section of program code as 'interrupt' code."
+	"SetInt Type": {
+		"prefix": "SetInt",
+		"body": "SetInt ${1:Type}",
+		"description": "SetInt is used to declare a section of program code as 'interrupt' code."
 	},
 	"Clrlnt Type": {
 		"prefix": "Clrlnt",
